@@ -109,13 +109,13 @@ MMA7455.calibY()
 MMA7455.calibZ()
  
 for a in range(100):
-#	x = MMA7455.getValueX()
-#	y = MMA7455.getValueY()
-#	z = MMA7455.getValueZ()
+	x = MMA7455.getValueX()
+	y = MMA7455.getValueY()
+	z = MMA7455.getValueZ()
  
-#	print "x=", x , "\t[" , "=" * (80 * x / 256) , " " *  (80 - (80 * x / 256)) , "] " , (80 * x / 256) , "%"
-#	print "y=", y , "\t[" , "=" * (80 * y / 256) , " " *  (80 - (80 * y / 256)) , "] " , (80 * y / 256) , "%"
-#	print "z=", z , "\t[" , "=" * (80 * z / 256) , " " *  (80 - (80 * z / 256)) , "] " , (80 * z / 256) , "%"
+	print "x=", x , "\t[" , "=" * (80 * x / 256) , " " *  (80 - (80 * x / 256)) , "] " , (80 * x / 256) , "%"
+	print "y=", y , "\t[" , "=" * (80 * y / 256) , " " *  (80 - (80 * y / 256)) , "] " , (80 * y / 256) , "%"
+	print "z=", z , "\t[" , "=" * (80 * z / 256) , " " *  (80 - (80 * z / 256)) , "] " , (80 * z / 256) , "%"
 	print MMA7455.determineDirection()
 	time.sleep(2.0)
 #	os.system('clear')
