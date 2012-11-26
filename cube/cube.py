@@ -1,5 +1,17 @@
 from mma7455 import Accel 
 
+class Rotation:
+	def __init__(self, time, rotation):
+		self.time = time
+		self.rotation = rotation
+	
+	def get_rotation(self):
+		return self.rotation
+
+	def get_time(self):
+		return self.time
+	
+		
 
 class Cube:
 	UNKNOWN = 0;
@@ -21,7 +33,7 @@ class Cube:
 		self.ZPos = [45, 65, 13]
 		self.ZNeg = [5, 65, 13]
 
-	def getRotation(self):
+	def get_rotation(self):
 		return self.currentRotation
 	
 	def calibX(self):
@@ -45,7 +57,7 @@ class Cube:
 
 
 
-	def checkRotation(self):
+	def check_rotation(self):
 		currentX = self.accel.getPercentX()
 		currentY = self.accel.getPercentY()
 		currentZ = self.accel.getPercentZ()
@@ -94,12 +106,3 @@ class Cube:
 		if( self.currentRotation == Cube.ZDOWN ):
 			return "Z DOWN"
 		return "UNKNOWN"
-	
-
-if(__name__ == '__main__'):
-	import time
-	cube = Cube()
-	while True:
-		cube.checkRotation()
-		print cube
-		time.sleep(1.0)
