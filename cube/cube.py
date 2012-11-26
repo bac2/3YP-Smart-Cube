@@ -80,7 +80,7 @@ class Cube:
 		else:
 			currentRotation = Cube.UNKNOWN
 
-	def str(self):
+	def __str__(self):
 		if( self.currentRotation == Cube.XUP):
 			return "X UP"
 		if( self.currentRotation == Cube.XDOWN ):
@@ -101,5 +101,5 @@ if(__name__ == '__main__'):
 	cube = Cube()
 	while True:
 		cube.checkRotation()
-		print cube.str()
+		print cube
 		time.sleep(1.0)
