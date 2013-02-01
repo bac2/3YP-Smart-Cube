@@ -4,7 +4,7 @@ import logging
 from log import Log 
 from cube import Rotation
 
-POST_URL = 'http://localhost/'
+POST_URL = 'http://192.168.1.97:8080'
 
 class Network:
 
@@ -17,14 +17,16 @@ class Network:
 #			post_data = {'rotation':rotation.get_rotation(), 'time':rotation.get_time()}
 #			post_encode = urllib.urlencode(post_data)
 #			request = urllib2.Request(POST_URL, post_encode)
-			url = POST_URL + rotation.get_time() + '/' + rotation.get_rotation()
+			url = POST_URL + '/0/' + str(rotation.get_rotation())+'/'+str(rotation.get_time())
 			response = requests.put(url)
 			logging.info('PUT to ' + url)
 
 			self.check_log()
-		except:
+		except IOError as  e:
+			print e
+
 			#We have a problem. Write it to the log file!
-			self.log.write_to_log(data)
+			self.log.write_to_log(rotation)
 	
 	#We want to check for any existing logs
 	def check_log(self):
