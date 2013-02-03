@@ -16,21 +16,12 @@
         <div class="navbar-inner">
             <div class="container-fluid">
                 <a class="brand" href='/'>Smart-Cube</a>
-		{% if not loggedin %}
-		<div class='pull-right'>
-			<a class="btn" href='/login'>Login Now</a>
-		</div>
-	        <div class='pull-right navbar-text' style='margin-right: 10px'>
-	    	    Not logged in
-	        </div>
-		{% else %}
 		<div class='pull-right'>
 			<a class="btn" href="/logout">Logout</a>
 		</div>
 		<div class='pull-right navbar-text' style='margin-right: 10px'>
 		    Welcome back, {{ fname }}!
 		</div>
-		{% end %}
             </div>
         </div>
     </div>
@@ -57,16 +48,20 @@
 	    </div>
 	    <div class="span9">
 		<div class="hero-unit main-header">
-			    <h2>Welcome</h2>
-			    Welcome to the Smart-Cube site!<br/>
-			    The Smart-Cube is a device which monitors your workflow, allows you to change task easily and to see what your colleagues and friends are doing.
-		</div>
-		<div class="row-fluid">
-			<div class="span12">
-				<h3>Public Smart-Cubes</h3>
-				We have no public Smart-Cubes to display at the moment - Help us out and <a href="/settings">make one of your Smart-Cubes public!</a>
-				<p><br/><a class="btn" href="/about">What are public cubes?</a><div>
-			</div>
+			    <h2>Register</h2>
+			    {% if complete %}
+				Thank you for registering this cube! It will begin updating once it has connected to our systems.
+			    {% else %}
+				    {% if not registered %}
+					Would you like to register this Smart-Cube to your account?
+					<form action="/register" method="post">
+					    <input type="hidden" name="unique_code" value="{{ unique_code }}">
+					    <input type="submit" value="Register" class="btn">
+					</form>
+				    {% else %}
+					Sorry, this cube has already been registered! To re-register this Smart-Cube is must first be unregistered.
+				    {% end %}
+			    {% end %}
 		</div>
 	    </div>
 	</div>

@@ -57,15 +57,19 @@
 	    </div>
 	    <div class="span9">
 		<div class="hero-unit main-header">
-			    <h2>Welcome</h2>
-			    Welcome to the Smart-Cube site!<br/>
-			    The Smart-Cube is a device which monitors your workflow, allows you to change task easily and to see what your colleagues and friends are doing.
+			    <h2>Your status</h2>
+			    Your current status is Working. Last updated: 20:13
 		</div>
 		<div class="row-fluid">
 			<div class="span12">
-				<h3>Public Smart-Cubes</h3>
-				We have no public Smart-Cubes to display at the moment - Help us out and <a href="/settings">make one of your Smart-Cubes public!</a>
-				<p><br/><a class="btn" href="/about">What are public cubes?</a><div>
+				<h3>Friend Smart-Cubes</h3>
+				{% if len(friends) ==  0 %}
+				You have no friends!
+				{% else %}
+					{%for friend in friends %}
+					<li>{{friend.name}}</li>
+					{% end %}
+				{% end %}
 			</div>
 		</div>
 	    </div>
