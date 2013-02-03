@@ -36,7 +36,7 @@ class App(tornado.web.Application):
 			(r"/login", GoogleHandler),
 			(r"/logout", LogoutHandler),
 			(r"/friends", FriendsHandler),
-			(r"/update", UpdateHandler),
+			(r"/update/([A-Za-z0-9]{6})", UpdateHandler),
 			(r"/register/([A-Z0-9a-z]{6})", RegisterHandler),
 			(r"/register", RegisterHandler)
 			]
@@ -138,15 +138,14 @@ class FriendsHandler(BaseHandler):
 class UpdateHandler(BaseHandler):
 	
 	#Receives an update from a cube
-	def post(self):
+	def post(self, unique_code):
 		import hmac
 		rotation = self.get_argument("rotation")
 		time = self.get_argument("time")
-		cube_id = self.get_argument("cube_id")
 		digest = self.get_argument("digest")
 		#Get the cube key from the database
-		cube_info = self.db.get("SELECT secret_key, owner FROM Cube WHERE id=%s", cube_id)
-		hmac = hmac.new(cube_info['secret_key'], rotation+time, hashlib.sha1)
+		cube_info = self.db.get("SELECT secret_key, owner FROM Cube WHERE id=%s", unique_code)
+		hmac = hmac.new(cube_info['secret_key'], rotation+time, hashlib.sha)
 		our_digest = hmac.digest()
 	
 		if our_digest != digest:
@@ -161,6 +160,7 @@ class RegisterHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self, unique_code):
 		cube = self.db.get("SELECT * FROM Cube WHERE unique_id=%s", unique_code)
+		self.params['complete'] = False
 		if cube:
 			self.params['registered'] = True
 		else:
@@ -169,12 +169,12 @@ class RegisterHandler(BaseHandler):
 		self.render('register.html', **self.params)
 
 	def post(self):
+		import hashlib
 		current_user = self.get_current_user()
-		self.db.execute("INSERT INTO Cube (Owner, unique_id) VALUES (%s, %s);", current_user.user_id, self.get_argument('unique_code')) 
+		secret_code = hashlib.sha224(self.get_argument('unique_code')).hexdigest()
+		self.db.execute("INSERT INTO Cube (secret_key, Owner, unique_id) VALUES (%s, %s, %s);", secret_code, current_user.user_id, self.get_argument('unique_code')) 
 		self.params['complete'] = True
 		self.render('register.html', **self.params)
-
-	
 
 def main():
 	tornado.options.parse_command_line()
