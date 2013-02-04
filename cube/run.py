@@ -26,7 +26,7 @@ def check_loop(l):
 			#Send it to the server
 			logging.info('Rotation changed from ', prev_rotation, ' to ', current_rotation)
 			rot = Rotation(current_rotation, datetime.datetime.now())
-			net.send_rotation_data(rot, cube)
+			net.send_rotation_data(rot)
 		prev_rotation = current_rotation
 		time.sleep(10)
 
