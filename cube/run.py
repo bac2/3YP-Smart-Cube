@@ -15,7 +15,7 @@ l = Lock()
 
 
 def check_loop(l):
-	net = Network()
+	net = Network(cube)
 	prev_rotation = -1
 	while(1):
 		l.acquire()
@@ -26,7 +26,7 @@ def check_loop(l):
 			#Send it to the server
 			logging.info('Rotation changed from ', prev_rotation, ' to ', current_rotation)
 			rot = Rotation(current_rotation, datetime.datetime.now())
-			net.send_rotation_data(rot)
+			net.send_rotation_data(rot, cube)
 		prev_rotation = current_rotation
 		time.sleep(10)
 
@@ -43,7 +43,7 @@ if(args.action == 'start'):
 	#Do some stuff...
 	logging.basicConfig(filename="cube.log")
 		
-	cube = Cube()
+	cube = Cube("123456")
 	p = Process(target=check_loop, args=(l,))
 	p.start()
 	run(host='0.0.0.0', port=8080)

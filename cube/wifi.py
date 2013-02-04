@@ -8,18 +8,17 @@ POST_URL = 'http://192.168.1.97:8080'
 
 class Network:
 
-	def __init__(self):
+	def __init__(self, cube):
 		self.log = Log()
+		self.cube_code = cube.code
 	
 	#Hash data of the form {'time':datetime, 'rotation':rotation}
 	def send_rotation_data(self, rotation):
 		try:
-#			post_data = {'rotation':rotation.get_rotation(), 'time':rotation.get_time()}
-#			post_encode = urllib.urlencode(post_data)
-#			request = urllib2.Request(POST_URL, post_encode)
-			url = POST_URL + '/0/' + str(rotation.get_rotation())+'/'+str(rotation.get_time())
-			response = requests.put(url)
-			logging.info('PUT to ' + url)
+			post_data = {'rotation':rotation.get_rotation(), 'time':rotation.get_time()}
+#			url = POST_URL + '/0/' + str(rotation.get_rotation())+'/'+str(rotation.get_time())
+			url = POST_URL + "/update/" + self.cube_code
+			response = requests.post(url, params=post_data)
 
 			self.check_log()
 		except IOError as  e:

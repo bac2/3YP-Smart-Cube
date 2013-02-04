@@ -22,7 +22,8 @@ class Cube:
 	ZUP = 5;
 	ZDOWN = 6;
 
-	def __init__(self):
+	def __init__(self, unique_code):
+		self.code = unique_code
 		self.accel = Accel()
 		self.currentRotation = 0;
 		#Some preconfigured values...
