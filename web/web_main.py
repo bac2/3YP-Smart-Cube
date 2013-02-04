@@ -1,4 +1,3 @@
-#encoding: utf-8
 import os
 
 import logging
@@ -14,7 +13,7 @@ from tornado.options import define, options
 
 define("port", default=8080, help="Run on the given port", type=int)
 define("mysql_user", default='cube', help='User to connect to database with')
-define("mysql_password", default='cubism_rules&£', help="Password to connect to mysql")
+define("mysql_password", default='cubism_rules', help="Password to connect to mysql")
 define("mysql_host", default='localhost', help='Host to connect to')
 define("mysql_database", default='3yp', help='The database to use')
 
@@ -140,15 +139,20 @@ class UpdateHandler(BaseHandler):
 	#Receives an update from a cube
 	def post(self, unique_code):
 		import hmac
+		import hashlib
+		print "REQUEST from", self.request.remote_ip
 		rotation = self.get_argument("rotation")
 		time = self.get_argument("time")
 		digest = self.get_argument("digest")
+		print "REQUEST:",rotation, time, digest
 		#Get the cube key from the database
-		cube_info = self.db.get("SELECT secret_key, owner FROM Cube WHERE id=%s", unique_code)
-		hmac = hmac.new(cube_info['secret_key'], rotation+time, hashlib.sha)
-		our_digest = hmac.digest()
+		cube_info = self.db.get("SELECT secret_key, owner FROM Cube WHERE unique_id=%s", unique_code)
+		str_key = str(cube_info['secret_key'])
+		hmac_obj = hmac.new(str_key, str(rotation)+str(time), hashlib.sha224)
+		our_digest = hmac_obj.hexdigest()
 	
 		if our_digest != digest:
+			print "Digests don't match:", our_digest, digest
 			return #Ignore it, it isn't from a cube we know!
 
 		#Do some stuff here
