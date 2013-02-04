@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Smart-Cube</title>
+    <!-- Bootstrap -->
+    <link href="{{ static_url("css/bootstrap.min.css") }}" rel="stylesheet" media="screen">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+      }
+    </style>
+  </head>
+  <body>
+    <!--Header bar-->
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="brand" href='/'>Smart-Cube</a>
+		{% if not loggedin %}
+		<div class='pull-right'>
+			<a class="btn" href='/login'>Login Now</a>
+		</div>
+	        <div class='pull-right navbar-text' style='margin-right: 10px'>
+	    	    Not logged in
+	        </div>
+		{% else %}
+		<div class='pull-right'>
+			<a class="btn" href="/logout">Logout</a>
+		</div>
+		<div class='pull-right navbar-text' style='margin-right: 10px'>
+		    Welcome back, {{ fname }}!
+		</div>
+		{% end %}
+            </div>
+        </div>
+    </div>
+
+    <!--NavBar and main content-->
+    <div class="container-fluid">
+	<div class="row-fluid">
+   	    <div class="span3">
+	        <div class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                        <li class="nav-header">Links</li>
+                        <li class="active"><a href="#">Public Cubes</a></li>
+			{% if loggedin %}
+			<li><a href="/friends">Friend Cubes</a></li>
+			<li><a href="/stats">Statistics</a></li>
+			{% end %}
+			<li class="nav-header">Options</li>
+			{% if loggedin %}
+			<li><a href="/settings">Your settings</a></li>
+			{% end %}
+                        <li><a href="/about">About</a></li>
+	            </ul>
+	       </div>
+	    </div>
+	    {% block content %}
+	    {% end %}
+	</div>
+    </div>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="{{ static_url("js/bootstrap.min.js") }}"></script>
+  </body>
+</html>
+<html>
