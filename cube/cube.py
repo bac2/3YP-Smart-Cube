@@ -1,4 +1,5 @@
 from mma7455 import Accel 
+SECRET_CODE = 'f8cdb04495ded47615258f9dc6a3f4707fd2405434fefc3c'
 
 class Rotation:
 	def __init__(self, time, rotation):
@@ -24,6 +25,7 @@ class Cube:
 
 	def __init__(self, unique_code):
 		self.code = unique_code
+		self.secret_code = SECRET_CODE
 		self.accel = Accel()
 		self.currentRotation = 0;
 		#Some preconfigured values...

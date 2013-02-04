@@ -1,24 +1,29 @@
 import time
 import requests
 import logging
+import hmac
+import hashlib
 from log import Log 
 from cube import Rotation
 
-POST_URL = 'http://192.168.1.97:8080'
+POST_URL = 'http://ubuntu.lan:8080'
 
 class Network:
 
 	def __init__(self, cube):
 		self.log = Log()
 		self.cube_code = cube.code
+		self.secret_code = cube.secret_code
 	
 	#Hash data of the form {'time':datetime, 'rotation':rotation}
 	def send_rotation_data(self, rotation):
 		try:
-			post_data = {'rotation':rotation.get_rotation(), 'time':rotation.get_time()}
-#			url = POST_URL + '/0/' + str(rotation.get_rotation())+'/'+str(rotation.get_time())
+			hmac_obj = hmac.new(str(self.secret_code), str(rotation.get_rotation())+str(rotation.get_time()), hashlib.sha224)
+			digest = hmac_obj.hexdigest()
+			post_data = {'rotation':rotation.get_rotation(), 'time':rotation.get_time(), 'digest':digest}
 			url = POST_URL + "/update/" + self.cube_code
 			response = requests.post(url, params=post_data)
+			print response.content
 
 			self.check_log()
 		except IOError as  e:
