@@ -4,12 +4,13 @@ import logging
 import datetime
 import tornado.httpserver
 import tornado.ioloop
-import tornado.auth
 import tornado.web
 import tornado.options
+import tornado.auth
 import torndb
 
 from tornado.options import define, options
+from data_objects import User, Profile, Cube
 
 define("port", default=8080, help="Run on the given port", type=int)
 define("mysql_user", default='cube', help='User to connect to database with')
@@ -19,14 +20,6 @@ define("mysql_database", default='3yp', help='The database to use')
 
 logging.basicConfig(filename='web.log', level=logging.INFO)
 
-class User():
-	def __init__(self,user_info):
-		self.name = user_info['name']
-		self.email = user_info['email']
-		self.user_id = user_info['id']
-	
-	def __str__(self):
-		return {'name':self.name, 'email':self.email, 'user_id':self.user_id}
 
 class App(tornado.web.Application):
 	def __init__(self):
@@ -37,7 +30,8 @@ class App(tornado.web.Application):
 			(r"/friends", FriendsHandler),
 			(r"/update/([A-Za-z0-9]{6})", UpdateHandler),
 			(r"/register/([A-Z0-9a-z]{6})", RegisterHandler),
-			(r"/register", RegisterHandler)
+			(r"/register", RegisterHandler),
+			(r"/settings", SettingsHandler)
 			]
 		settings = dict(
 			app_title=u'Smart-Cube',
@@ -121,6 +115,7 @@ class FriendsHandler(BaseHandler):
 		#Get friends from the database
 		friends = self.get_friends()
 		self.params['friends'] = friends
+		self.params['cubes'] = self.get_cubes()
 		self.render("friends.html", **self.params)
 
 	def get_friends(self):
@@ -131,8 +126,22 @@ class FriendsHandler(BaseHandler):
 		for friend in friends:
 			#Make a friend object out of the information for each friend
 			users.append(User(friend))
-		print [ i.name for i in users]
 		return users
+
+	def get_cubes(self):
+		current_user = self.get_current_user()
+		cubes_info = self.db.query("SELECT Cube.id, owner, unique_id, current_profile, position, time as last_transition FROM Cube INNER JOIN (SELECT cube_id, position, time FROM Transition ORDER BY time DESC) as alias ON cube_id = Cube.id WHERE owner=%s GROUP BY Cube.id;", current_user.user_id);
+
+#'SELECT Cube.id as id, owner, unique_id, current_profile, MAX(time) as last_transition FROM Cube INNER JOIN Transition ON Transition.cube_id = Cube.id WHERE owner=%s GROUP BY Cube.id;" , current_user.user_id)
+		
+		cubes = []
+		for cube_info in cubes_info:
+			current = Cube(cube_info)
+			profile_info = self.db.get("SELECT * FROM Profile WHERE id = %s", cube_info['current_profile'])
+			current.profile = Profile(profile_info)
+			current.owner = current_user
+			cubes.append(current)
+		return cubes
 
 class UpdateHandler(BaseHandler):
 	
@@ -140,23 +149,26 @@ class UpdateHandler(BaseHandler):
 	def post(self, unique_code):
 		import hmac
 		import hashlib
-		print "REQUEST from", self.request.remote_ip
 		rotation = self.get_argument("rotation")
 		time = self.get_argument("time")
 		digest = self.get_argument("digest")
-		print "REQUEST:",rotation, time, digest
 		#Get the cube key from the database
-		cube_info = self.db.get("SELECT secret_key, owner FROM Cube WHERE unique_id=%s", unique_code)
-		str_key = str(cube_info['secret_key'])
-		hmac_obj = hmac.new(str_key, str(rotation)+str(time), hashlib.sha224)
+		cube_info = self.db.get("SELECT id, secret_key, owner FROM Cube WHERE unique_id=%s", unique_code)
+		if not cube_info:
+			#We don't know about this cube
+			self.write("Unknown cube code")
+			return
+		hmac_obj = hmac.new(str(cube_info['secret_key']), str(rotation)+str(time), hashlib.sha224)
 		our_digest = hmac_obj.hexdigest()
 	
 		if our_digest != digest:
 			print "Digests don't match:", our_digest, digest
 			return #Ignore it, it isn't from a cube we know!
 
-		#Do some stuff here
-		print rotation, time, cube_info['owner']
+		#Do some stuff here - Add a rotation to the database
+		print "Updated to cube", unique_code + ": ", rotation, time, cube_info['owner']
+		self.db.execute("INSERT INTO Transition (position, time, cube_id) VALUES (%s, %s, %s);", rotation, time, cube_info['id'])
+		
 
 class RegisterHandler(BaseHandler):
 	
@@ -179,6 +191,23 @@ class RegisterHandler(BaseHandler):
 		self.db.execute("INSERT INTO Cube (secret_key, Owner, unique_id) VALUES (%s, %s, %s);", secret_code, current_user.user_id, self.get_argument('unique_code')) 
 		self.params['complete'] = True
 		self.render('register.html', **self.params)
+
+class SettingsHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		self.params['profiles'] = self.get_profiles()
+		self.render('settings.html', **self.params)
+
+	def get_profiles(self):
+		current_user = self.get_current_user()
+		profiles_info = self.db.query("SELECT * FROM Profile WHERE creator_id = %s", current_user.user_id)
+		#Convert to objects
+		profiles = []
+		for profile_info in profiles_info:
+			profile = Profile(profile_info)
+			profile.creator = current_user
+			profiles.append(profile)
+		return profiles
 
 def main():
 	tornado.options.parse_command_line()

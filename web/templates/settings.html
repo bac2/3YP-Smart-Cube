@@ -1,0 +1,39 @@
+{% extends "base.html" %}	    
+{% block content %}
+    <div class="span9">
+	<div class="hero-unit main-header">
+	    <h2>Settings</h2>
+	    Here you can set the profile information for your cube, change your stored information and set up other account preferences. 
+	</div>
+	<div class="row-fluid">
+		<div class="span9">
+		    <a class="btn" data-toggle="collapse" data-target=".profiles-collapse" style="margin-bottom: 20px;">Profiles</a>
+		    <div class="collapse profiles-collapse">
+			<div class="well">
+			    {% if len(profiles) == 0 %}
+				You have no profiles! A Smart-Cube uses profiles to describe what a side means. You can have many profiles and swap between them for each cube you own. <br/>
+				<a href="#">Create a profile now!</a> 
+			    {% else %}
+				Your available profiles are:<br/>
+				{% for profile in profiles %}
+					<strong>{{ profile.name }}</strong><br/>
+					Descriptor line: {{ profile.describe_line }}<br/>
+					Side names:<br/>
+					{% for side in profile.sides %}
+						{{side}}<br/>
+					{% end %}
+					<br/><br/>
+				{% end %}
+			    {% end %}
+			</div>
+		    </div>
+		    <a class="btn" data-toggle="collapse" data-target=".account-collapse" style="margin-bottom: 20px;">Account</a>
+		    <div class="collapse account-collapse">
+			<div class="well">
+			    Account!
+			</div>
+		    </div>
+		</div>
+	</div>
+    </div>
+{% end %}
