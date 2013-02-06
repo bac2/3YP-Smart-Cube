@@ -18,9 +18,10 @@ class Network:
 	#Hash data of the form {'time':datetime, 'rotation':rotation}
 	def send_rotation_data(self, rotation):
 		try:
-			hmac_obj = hmac.new(str(self.secret_code), str(rotation.get_rotation())+str(rotation.get_time()), hashlib.sha224)
+			hmac_obj = hmac.new(str(self.secret_code), str(rotation.rotation)+str(rotation.time), hashlib.sha224)
 			digest = hmac_obj.hexdigest()
-			post_data = {'rotation':rotation.get_rotation(), 'time':rotation.get_time(), 'digest':digest}
+			post_data = {'rotation':rotation.rotation, 'time':rotation.time, 'digest':digest}
+			print "About to send",post_data
 			url = POST_URL + "/update/" + self.cube_code
 			response = requests.post(url, params=post_data)
 			print response.content

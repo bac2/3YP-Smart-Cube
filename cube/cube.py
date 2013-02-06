@@ -1,19 +1,11 @@
 from mma7455 import Accel 
-SECRET_CODE = 'f8cdb04495ded47615258f9dc6a3f4707fd2405434fefc3c'
+SECRET_CODE = 'f8cdb04495ded47615258f9dc6a3f4707fd2405434fefc3cbf4ef4e6'
 
 class Rotation:
-	def __init__(self, time, rotation):
+	def __init__(self, rotation, time):
 		self.time = time
 		self.rotation = rotation
 	
-	def get_rotation(self):
-		return self.rotation
-
-	def get_time(self):
-		return self.time
-	
-		
-
 class Cube:
 	UNKNOWN = 0;
 	XUP = 1;
