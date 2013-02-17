@@ -82,13 +82,15 @@ class BaseHandler(tornado.web.RequestHandler):
 	#Returns all the cubes for the current user
 	def get_cubes(self):
 		current_user = self.get_current_user()
-		cubes_info = self.db.query("SELECT Cube.id, owner, unique_id, position, time as last_transition FROM Cube INNER JOIN (SELECT cube_id, position, time FROM Transition ORDER BY time DESC) as alias ON cube_id = Cube.id WHERE owner=%s GROUP BY Cube.id;", current_user.user_id);
+		#gets info about the cube and the profile id when it was last updated
+		cubes_info = self.db.query("SELECT Cube.id, owner, unique_id, position, time as last_transition, (SELECT profile_id FROM Profile INNER JOIN ProfileTransition ON ProfileTransition.profile_id = Profile.id WHERE last_transition > time ORDER BY time DESC LIMIT 1) as corresponding_profile FROM Cube INNER JOIN (SELECT cube_id, position, time FROM Transition ORDER BY time DESC) as alias ON cube_id = Cube.id WHERE owner=%s GROUP BY Cube.id;", current_user.user_id);
 
 		cubes = []
 		for cube_info in cubes_info:
 			current = Cube(cube_info)
+			#Fills in the currently selected profile information
+			#This could be different from the active profile on the last transition
 			profile_info = self.db.get("SELECT Profile.id as id, describe_line, name, creator_id, side1, side2, side3, side4, side5, side6, profile_id, time, cube_id FROM Profile INNER JOIN ProfileTransition ON ProfileTransition.profile_id = Profile.id WHERE cube_id = %s ORDER BY time DESC LIMIT 1;", current.cube_id)
-			#profile_info = self.db.get("SELECT * FROM Profile WHERE id = %s", cube_info['current_profile'])
 			if profile_info is None:
 				current.profile = None
 			else:
