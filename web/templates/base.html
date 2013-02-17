@@ -42,16 +42,16 @@
 	        <div class="well sidebar-nav">
                     <ul class="nav nav-list">
                         <li class="nav-header">Links</li>
-                        <li class="active"><a href="/">Public Cubes</a></li>
+                        <li {% if request.path=="/" %} class=active {%end%}><a href="/">Public Cubes</a></li>
 			{% if loggedin %}
-			<li><a href="/friends">Friend Cubes</a></li>
-			<li><a href="/stats">Statistics</a></li>
+			<li {% if request.path=="/friends" %} class=active {%end%}><a href="/friends">Friend Cubes</a></li>
+			<li {% if request.path=="/stats" %} class=active {%end%}><a href="/stats">Statistics</a></li>
 			{% end %}
 			<li class="nav-header">Options</li>
 			{% if loggedin %}
-			<li><a href="/settings">Your settings</a></li>
+			<li{% if request.path=="/settings" %} class=active {%end%}><a href="/settings">Your settings</a></li>
 			{% end %}
-                        <li><a href="/about">About</a></li>
+                        <li{% if request.path=="/about" %} class=active {%end%}><a href="/about">About</a></li>
 	            </ul>
 	       </div>
 	    </div>

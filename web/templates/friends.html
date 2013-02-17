@@ -4,7 +4,19 @@
 <div class="span9">
 	<div class="hero-unit main-header">
 	    <h2>Your status</h2>
-	    Your current status is Working. Last updated: 20:13
+	    {% if len(cubes) == 0 %}
+	    You haven't registered any Smart-Cubes!
+	    {% else %}
+	        {% for cube in cubes %}
+		    <div class="well">
+		        Smart-Cube {{cube.code}}<br/>
+		        You are {{ cube.profile.describe_line }} {{ cube.profile.sides[cube.rotation-1] }}.
+		        <div class="pull-right" style="font-size: 10pt;">
+			    Last Updated: {{str(cube.last_transition.hour) + ":" + str(cube.last_transition.minute)}}
+		        </div>
+		    </div>
+		{% end %}
+	    {% end %}
 	</div>
 	<div class="row-fluid">
 		<div class="span12">
