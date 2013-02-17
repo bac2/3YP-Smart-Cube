@@ -10,10 +10,14 @@
 	        {% for cube in cubes %}
 		    <div class="well">
 		        Smart-Cube {{cube.code}}<br/>
+			{% if cube.profile is None %}
+			There is no profile attached to this Smart-Cube!
+			{% else %}
 		        You are {{ cube.profile.describe_line }} {{ cube.profile.sides[cube.rotation-1] }}.
 		        <div class="pull-right" style="font-size: 10pt;">
 			    Last Updated: {{str(cube.last_transition.hour) + ":" + str(cube.last_transition.minute)}}
 		        </div>
+			{% end %}
 		    </div>
 		{% end %}
 	    {% end %}

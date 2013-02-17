@@ -31,7 +31,10 @@ class App(tornado.web.Application):
 			(r"/update/([A-Za-z0-9]{6})", UpdateHandler),
 			(r"/register/([A-Z0-9a-z]{6})", RegisterHandler),
 			(r"/register", RegisterHandler),
-			(r"/settings", SettingsHandler)
+			(r"/settings", SettingsHandler),
+			(r"/settings/profile", ProfileUpdateHandler),
+			(r"/settings/cube", CubeUpdateHandler),
+			(r"/about", AboutHandler)
 			]
 		settings = dict(
 			app_title=u'Smart-Cube',
@@ -53,6 +56,7 @@ class App(tornado.web.Application):
 #All handlers inherit this. Defines useful things
 class BaseHandler(tornado.web.RequestHandler):
 	
+	#Sets up the params hash
 	def initialize(self):
 		self.params = {}
 		current_user = self.get_current_user()
@@ -62,16 +66,36 @@ class BaseHandler(tornado.web.RequestHandler):
 			self.params['loggedin'] = True
 			self.params['fname'] = current_user.name.split(" ")[0]
 	
+	#Shortcut to the db
 	@property
 	def db(self):
 		return self.application.db
 
+	#Returns the current user as an object
 	def get_current_user(self):
 		user_id = self.get_secure_cookie('user')
 		if not user_id:
 			return None
 		user_info = self.db.get('SELECT * FROM User WHERE id=%s', user_id)
 		return User(user_info)
+
+	#Returns all the cubes for the current user
+	def get_cubes(self):
+		current_user = self.get_current_user()
+		cubes_info = self.db.query("SELECT Cube.id, owner, unique_id, position, time as last_transition FROM Cube INNER JOIN (SELECT cube_id, position, time FROM Transition ORDER BY time DESC) as alias ON cube_id = Cube.id WHERE owner=%s GROUP BY Cube.id;", current_user.user_id);
+
+		cubes = []
+		for cube_info in cubes_info:
+			current = Cube(cube_info)
+			profile_info = self.db.get("SELECT Profile.id as id, describe_line, name, creator_id, side1, side2, side3, side4, side5, side6, profile_id, time, cube_id FROM Profile INNER JOIN ProfileTransition ON ProfileTransition.profile_id = Profile.id WHERE cube_id = %s ORDER BY time DESC LIMIT 1;", current.cube_id)
+			#profile_info = self.db.get("SELECT * FROM Profile WHERE id = %s", cube_info['current_profile'])
+			if profile_info is None:
+				current.profile = None
+			else:
+				current.profile = Profile(profile_info)
+			current.owner = current_user
+			cubes.append(current)
+		return cubes
 
 class HomeHandler(BaseHandler):
 	def get(self):
@@ -128,20 +152,6 @@ class FriendsHandler(BaseHandler):
 			users.append(User(friend))
 		return users
 
-	def get_cubes(self):
-		current_user = self.get_current_user()
-		cubes_info = self.db.query("SELECT Cube.id, owner, unique_id, current_profile, position, time as last_transition FROM Cube INNER JOIN (SELECT cube_id, position, time FROM Transition ORDER BY time DESC) as alias ON cube_id = Cube.id WHERE owner=%s GROUP BY Cube.id;", current_user.user_id);
-
-#'SELECT Cube.id as id, owner, unique_id, current_profile, MAX(time) as last_transition FROM Cube INNER JOIN Transition ON Transition.cube_id = Cube.id WHERE owner=%s GROUP BY Cube.id;" , current_user.user_id)
-		
-		cubes = []
-		for cube_info in cubes_info:
-			current = Cube(cube_info)
-			profile_info = self.db.get("SELECT * FROM Profile WHERE id = %s", cube_info['current_profile'])
-			current.profile = Profile(profile_info)
-			current.owner = current_user
-			cubes.append(current)
-		return cubes
 
 class UpdateHandler(BaseHandler):
 	
@@ -166,7 +176,6 @@ class UpdateHandler(BaseHandler):
 			return #Ignore it, it isn't from a cube we know!
 
 		#Do some stuff here - Add a rotation to the database
-		print "Updated to cube", unique_code + ": ", rotation, time, cube_info['owner']
 		self.db.execute("INSERT INTO Transition (position, time, cube_id) VALUES (%s, %s, %s);", rotation, time, cube_info['id'])
 		
 
@@ -196,6 +205,7 @@ class SettingsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		self.params['profiles'] = self.get_profiles()
+		self.params['cubes'] = self.get_cubes()
 		self.render('settings.html', **self.params)
 
 	def get_profiles(self):
@@ -209,11 +219,49 @@ class SettingsHandler(BaseHandler):
 			profiles.append(profile)
 		return profiles
 
+class ProfileUpdateHandler(BaseHandler):
+	@tornado.web.authenticated
+	def post(self):
+		name = self.get_argument("name")
+		desc = self.get_argument("desc")
+		s1 = self.get_argument("s1")
+		s2 = self.get_argument("s2")
+		s3 = self.get_argument("s3")
+		s4 = self.get_argument("s4")
+		s5 = self.get_argument("s5")
+		s6 = self.get_argument("s6")
+		current_user = self.get_current_user()
+		
+		self.db.execute("INSERT INTO Profile (creator_id, name, describe_line, side1, side2, side3, side4, side5, side6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);", current_user.user_id, name, desc, s1, s2, s3, s4, s5, s6) 
+		self.redirect("/settings")	
+
+class CubeUpdateHandler(BaseHandler):
+	@tornado.web.authenticated
+	def post(self):
+		profile_id = self.get_argument("pid")
+		cube_id = self.get_argument("cid")
+		
+		profile_name = self.save_profile(cube_id, profile_id)
+		
+		self.write(profile_name)
+
+	def save_profile(self, cube_id, profile_id):
+
+		self.db.execute("INSERT INTO ProfileTransition (cube_id, profile_id, time) VALUES (%s, %s, NOW());", cube_id, profile_id)
+
+		profile = self.db.get("SELECT * FROM Profile WHERE id = %s", profile_id)
+		return profile['name']
+
+class AboutHandler(BaseHandler):
+	def get(self):
+		self.render("about.html", **self.params)
+
 def main():
 	tornado.options.parse_command_line()
 	http_server = tornado.httpserver.HTTPServer(App())
 	http_server.listen(options.port)
 	tornado.ioloop.IOLoop.instance().start()
 
-if(__name__ == '__main__'):
+if __name__ == '__main__':
 	main()
+
