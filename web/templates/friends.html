@@ -10,10 +10,15 @@
 	        {% for cube in cubes %}
 		    <div class="well">
 		        Smart-Cube {{cube.code}}<br/>
-			{% if cube.profile is None %}
-			There is no profile attached to this Smart-Cube!
+			{% if cube.corresponding_profile is None %}
+			There was no profile attached to this Smart-Cube when it was last updated.
+			  {% if cube.profile is None %}
+				Attach a profile <a href="/settings">in the settings."</a>
+			  {% else %}
+				Your current profile will come into effect on the next update.
+			  {% end %}
 			{% else %}
-		        You are {{ cube.profile.describe_line }} {{ cube.profile.sides[cube.rotation-1] }}.
+		        You are {{ cube.corresponding_profile.describe_line }} {{ cube.corresponding_profile.sides[cube.rotation-1] }}.
 		        <div class="pull-right" style="font-size: 10pt;">
 			    Last Updated: {{str(cube.last_transition.hour) + ":" + str(cube.last_transition.minute)}}
 		        </div>

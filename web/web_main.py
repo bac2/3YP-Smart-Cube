@@ -95,6 +95,13 @@ class BaseHandler(tornado.web.RequestHandler):
 				current.profile = None
 			else:
 				current.profile = Profile(profile_info)
+		
+			#Fills in the active profile at the time of last transition
+			if cube_info['corresponding_profile'] is None:
+				current.corresponding_profile = None
+			else:
+				profile_info = self.db.get("SELECT * FROM Profile WHERE id=%s;", cube_info['corresponding_profile'])
+				current.corresponding_profile = Profile(profile_info)
 			current.owner = current_user
 			cubes.append(current)
 		return cubes
