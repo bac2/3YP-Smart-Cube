@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from wifi import Network
+from net import Network
 from cube import Cube, Rotation
 from bottle import run, route, template
 from multiprocessing import Process, Lock
