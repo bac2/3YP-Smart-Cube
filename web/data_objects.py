@@ -24,3 +24,6 @@ class Cube():
 		self.code = cube_info['unique_id']
 		self.rotation = cube_info['position']
 		self.last_transition = cube_info['last_transition']
+		#These are set externally
+		self.profile = None
+		self.corresponding_profile = None

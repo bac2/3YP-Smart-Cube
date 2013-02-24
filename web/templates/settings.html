@@ -39,6 +39,7 @@
 						</div>
 					<br/>
 					<br/>
+
 				{% end %}
 			    {% end %}
 			</div>
@@ -50,16 +51,29 @@
 				You have no profiles! A Smart-Cube uses profiles to describe what a side means. You can have many profiles and swap between them for each cube you own. <br/>
 			    {% else %}
 				{% for profile in profiles %}
-					<strong>{{ profile.name }}</strong><br/>
-					Tag line: {{ profile.describe_line }}<br/>
+				    <div class="profile" profile_id="{{profile.profile_id}}">
+					<button type="button" id="delete" class="close">&times;</button>
+					<button type="button" id="edit" class="close">✎</button>
+					<button type="button" id="confirm" class="close">✔</button>
+					<strong><span id="name">{{ profile.name }}</span></strong><br/>
+					Tag line: <span id="tagline">{{ profile.describe_line }}</span><br/>
 					{% for index, side in zip(range(0, len(profile.sides)), profile.sides) %}
-						Side {{index+1}}:    {{side}}<br/>
+						Side {{index+1}}:   <span id="side{{index+1}}">{{side}}</span><br/>
 					{% end %}
 					<br/>
+				    </div>
 				{% end %}
 				
 			    {% end %}
 				<a class="btn" data-toggle="modal" href="#profile_create">Create a new profile</a>
+			</div>
+		    </div>
+		    <a class="btn" data-toggle="collapse" data-target=".events-collapse" style="margin-bottom: 20px;">Events</a>
+		    <div class="collapse events-collapse">
+			<div class="well">
+			    {% if len(events) == 0 %}
+				You have no events set up!
+			    {% end %}
 			</div>
 		    </div>
 		    <a class="btn" data-toggle="collapse" data-target=".account-collapse" style="margin-bottom: 20px;">Account</a>
@@ -69,70 +83,73 @@
 			</div>
 		    </div>
 		</div>
-<!-- Profile creation modal -->
-<div id="profile_create" class="modal hide fade">
-  <form class="form-horizontal" method="post" action="/settings/profile" >
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Create a profile</h3>
-  </div>
-  <div class="modal-body">
-    <p>A profile is used to interpret what your Smart-Cube means.</p>
-      <div class="control-group">
-	<label class="control-label" for="p_name">Profile name</label>
-	<div class="controls">
-          <input type="text" name="name" id="p_name"/><br/>
-	</div>
-      </div>
-      <div class="control-group">
-	<label class="control-label" for="p_desc">Tag line</label>
-	<div class="controls">
-          <input type="text" name="desc" id="p_desc"/><br/>
-	</div>
-      </div>
-      <div class="control-group">
-	<label class="control-label" for="p_s1">Top</label>
-	<div class="controls">
-          <input type="text" name="s1" id="p_s1"/><br/>
-	</div>
-      </div>
-      <div class="control-group">
-	<label class="control-label" for="p_s2">Bottom</label>
-	<div class="controls">
-          <input type="text" name="s2" id="p_s2"/><br/>
-	</div>
-      </div>
-      <div class="control-group">
-	<label class="control-label" for="p_s3">Left</label>
-	<div class="controls">
-          <input type="text" name="s3" id="p_s3"/><br/>
-	</div>
-      </div>
-      <div class="control-group">
-	<label class="control-label" for="p_s4">Right</label>
-	<div class="controls">
-          <input type="text" name="s4" id="p_s4"/><br/>
-	</div>
-      </div>
-      <div class="control-group">
-	<label class="control-label" for="p_s5">Front</label>
-	<div class="controls">
-          <input type="text" name="s6" id="p_s5"/><br/>
-	</div>
-      </div>
-      <div class="control-group">
-	<label class="control-label" for="p_s6">Back</label>
-	<div class="controls">
-          <input type="text" name="s5" id="p_s6"/><br/>
-	</div>
-      </div>
-  </div>
-  <div class="modal-footer">
-    <button href="#" class="btn" data-action="dismiss">Close</a>
-    <button href="#" type="submit" class="btn btn-primary">Save changes</a>
-  </div>
-  </form>
-</div>	
+
+		<!-- Profile creation modal -->
+		<div id="profile_create" class="modal hide fade">
+		  <form class="form-horizontal" method="post" action="/settings/profile" >
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		    <h3>Create a profile</h3>
+		  </div>
+		  <div class="modal-body">
+		    <p>A profile is used to interpret what your Smart-Cube means.</p>
+		      <div class="control-group">
+			<label class="control-label" for="p_name">Profile name</label>
+			<div class="controls">
+		          <input type="text" name="name" id="p_name"/><br/>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label" for="p_desc">Tag line</label>
+			<div class="controls">
+		          <input type="text" name="desc" id="p_desc"/><br/>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label" for="p_s1">Top</label>
+			<div class="controls">
+		          <input type="text" name="s1" id="p_s1"/><br/>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label" for="p_s2">Bottom</label>
+			<div class="controls">
+		          <input type="text" name="s2" id="p_s2"/><br/>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label" for="p_s3">Left</label>
+			<div class="controls">
+		          <input type="text" name="s3" id="p_s3"/><br/>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label" for="p_s4">Right</label>
+			<div class="controls">
+		          <input type="text" name="s4" id="p_s4"/><br/>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label" for="p_s5">Front</label>
+			<div class="controls">
+		          <input type="text" name="s6" id="p_s5"/><br/>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label" for="p_s6">Back</label>
+			<div class="controls">
+		          <input type="text" name="s5" id="p_s6"/><br/>
+			</div>
+		      </div>
+		  </div>
+		  <div class="modal-footer">
+		    <button href="#" class="btn" data-action="dismiss">Close</a>
+		    <button href="#" type="submit" class="btn btn-primary">Save changes</a>
+		  </div>
+		  </form>
+		</div>	
 	</div>
     </div>
 {% end %}
+
+
