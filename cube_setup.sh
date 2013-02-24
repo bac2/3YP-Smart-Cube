@@ -6,22 +6,40 @@ for(( i=1; i<=6; i++)) do
 done
 
 #Set the cube code
-echo 'Generate Cube Code'
-sed 's/Cube(\"[0-9]*\")/Cube\("'$number'"\)/' < cube/run.py >/dev/null
+echo 'Generated Cube Code - ' $number
+echo 'import hashlib' > temp
+echo 'print hashlib.sha224(str('$number')).hexdigest()' >> temp
+code=`python temp`
+rm temp
 
-apt-get -y install i2c-tools
+echo 'Generated Secret Code - ' $code 
+sed 's/Cube(\"[0-9]*\")/Cube\("'$number'"\)/' < cube/run.py >temp
+cp temp cube/run.py
+rm temp
+
+sed "s/SECRET_CODE = '.*'$/SECRET_CODE = '"$code"'/" <cube/cube.py >temp
+cp temp cube/cube.py
+rm temp
+
+echo 'Installing i2c-tools...'
+apt-get -y install i2c-tools >/dev/null
 
 #Enable i2c
-echo 'Enabled i2c loading'
+echo 'Enabled i2c loading...'
 awk '{ if ($0 == "i2c-dev") { print ""; } else { print $0; } }' < /etc/modules | sudo tee /etc/modules 1>/dev/null
 echo 'i2c-dev' | sudo tee -a /etc/modules 1>/dev/null
-sudo adduser pi i2c
+sudo adduser pi i2c >/dev/null
 
 awk '{ if ($0 ~ /^blacklist i2c-bcm2708/ ){print "#",$0} else { print $0;} }' < /etc/modprobe.d/raspi-blacklist.conf | sudo tee /etc/modprobe.d/raspi-blacklist.conf 1>/dev/null
-echo 'Unblocked i2c driver'
-apt-get -y install python-smbus
-apt-get -y install python-pip
-pip install requests
-easy_install -U bottle
+echo 'Unblocked i2c driver...'
+echo 'Installing python-smbus...'
+apt-get -y install python-smbus >/dev/null
+echo 'Installing python-pip...'
+apt-get -y install python-pip >/dev/null
+echo 'Installing python requests...'
+pip install requests >/dev/null
+echo 'Installing python bottle...'
+easy_install -U bottle >/dev/null
+echo 'Installation Complete'
 #sudo shutdown -r now
 
