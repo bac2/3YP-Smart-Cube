@@ -6,7 +6,7 @@ import hashlib
 from log import Log 
 from cube import Rotation
 
-POST_URL = 'http://ubuntu.lan:8080'
+POST_URL = 'http://bubuntu-vm.lan:8080'
 
 class Network:
 
