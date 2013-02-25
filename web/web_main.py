@@ -17,6 +17,7 @@ import auth
 import settings
 import cube
 import friends
+import statistics
 from base_handler import BaseHandler
 
 
@@ -27,6 +28,7 @@ class App(tornado.web.Application):
 			(r"/login", auth.GoogleHandler),
 			(r"/logout", auth.LogoutHandler),
 			(r"/friends", friends.FriendsHandler),
+			(r"/statistics", statistics.StatsHandler),
 			(r"/update/([A-Za-z0-9]{6})", cube.UpdateHandler),
 			(r"/register/([A-Z0-9a-z]{6})", cube.RegisterHandler),
 			(r"/register", cube.RegisterHandler),

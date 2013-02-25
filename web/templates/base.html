@@ -45,7 +45,7 @@
                         <li {% if request.path=="/" %} class=active {%end%}><a href="/">Public Cubes</a></li>
 			{% if loggedin %}
 			<li {% if request.path=="/friends" %} class=active {%end%}><a href="/friends">Friend Cubes</a></li>
-			<li {% if request.path=="/stats" %} class=active {%end%}><a href="/stats">Statistics</a></li>
+			<li {% if request.path=="/statistics" %} class=active {%end%}><a href="/statistics">Statistics</a></li>
 			{% end %}
 			<li class="nav-header">Options</li>
 			{% if loggedin %}
