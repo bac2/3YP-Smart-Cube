@@ -41,5 +41,13 @@ pip install requests >/dev/null
 echo 'Installing python bottle...'
 easy_install -U bottle >/dev/null
 echo 'Installation Complete'
+
+echo 'Adding to startup (rc.local)...'
+sed 's/^exit 0/\/home\/pi\/3YP\/cube\/run.py start &\
+\
+&/' /etc/rc.local > temp
+cp temp /etc/rc.local
+rm temp
+
 #sudo shutdown -r now
 
