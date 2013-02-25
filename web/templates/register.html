@@ -7,7 +7,7 @@
     	    Thank you for registering this cube! It will begin updating once it has connected to our systems.
 	    {% else %}
 	        {% if not registered %}
-	        Would you like to register this Smart-Cube to your account?
+	        Would you like to register Smart-Cube {{unique_code}} to your account?
 		<form action="/register" method="post">
 		    <input type="hidden" name="unique_code" value="{{ unique_code }}">
 		    <input type="submit" value="Register" class="btn">
