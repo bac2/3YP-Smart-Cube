@@ -29,7 +29,7 @@ class App(tornado.web.Application):
 			(r"/logout", auth.LogoutHandler),
 			(r"/friends", friends.FriendsHandler),
 			(r"/statistics", stats.StatsHandler),
-			(r"/statistics/([0-9]+)", stats.StatsHandler),
+			(r"/statistics/([0-9]+)", stats.StatsDataHandler),
 			(r"/update/([A-Za-z0-9]{6})", cube.UpdateHandler),
 			(r"/register/([A-Z0-9a-z]{6})", cube.RegisterHandler),
 			(r"/register", cube.RegisterHandler),
