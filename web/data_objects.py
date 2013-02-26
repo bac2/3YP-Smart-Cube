@@ -27,3 +27,10 @@ class Cube():
 		#These are set externally
 		self.profile = None
 		self.corresponding_profile = None
+
+class Transition():
+	def __init__(self, transition_info):
+		self.time = transition_info['time']
+		self.position = transition_info['position']
+		self.cube_id = transition_info['cube_id']
+		self.side_name = transition_info['sidename']

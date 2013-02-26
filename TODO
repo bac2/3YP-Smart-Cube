@@ -1,1 +1,5 @@
 Create a config file for cube: Address to send to, owner, etc.
+
+Profile deletion: Delete and save stats or delete both? Do nothing if stats exist?
+
+Events on website: Flash LED on Pi? Alert in some other way?
