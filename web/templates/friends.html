@@ -34,7 +34,11 @@
 			You have no friends!
 			{% else %}
 				{%for friend in friends %}
-				<li>{{friend.name}}</li>
+				<div class="friend">{{friend.name}} is
+					{% for cube in friend.cubes %}
+						<li>{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}}</li>
+					{% end %}
+				</div>
 				{% end %}
 			{% end %}
 		</div>

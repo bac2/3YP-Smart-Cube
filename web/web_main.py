@@ -37,7 +37,7 @@ class App(tornado.web.Application):
 			(r"/settings/profile", settings.ProfileCreateHandler),
 			(r"/settings/profile/delete/([0-9]+)", settings.ProfileDeleteHandler),
 			(r"/settings/profile/edit/([0-9]+)", settings.ProfileEditHandler),
-			(r"/settings/cube", settings.CubeUpdateHandler),
+			(r"/settings/cube", settings.CubeProfileHandler),
 			(r"/about", AboutHandler)
 			]
 		app_settings = dict(

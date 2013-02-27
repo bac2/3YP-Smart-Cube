@@ -4,6 +4,8 @@ class User():
 		self.name = user_info['name']
 		self.email = user_info['email']
 		self.user_id = user_info['id']
+		#set elsewhere
+		self.cubes = None
 	
 	def __str__(self):
 		return str({'name':self.name, 'email':self.email, 'user_id':self.user_id})

@@ -7,8 +7,7 @@ class FriendsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):	
 		#Get friends from the database
-		friends = self.get_friends()
-		self.params['friends'] = friends
+		self.params['friends'] = self.get_friends()
 		self.params['cubes'] = self.get_cubes()
 		self.render("friends.html", **self.params)
 
@@ -19,6 +18,14 @@ class FriendsHandler(BaseHandler):
 		users = []
 		for friend in friends:
 			#Make a friend object out of the information for each friend
-			users.append(User(friend))
+			current = User(friend)
+			current.cubes = self.get_cubes(current)
+			users.append(current)
 		return users
+
+
+class FindFriendsHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		self.write("hello!")
 

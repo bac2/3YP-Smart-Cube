@@ -28,8 +28,12 @@ class BaseHandler(tornado.web.RequestHandler):
 		return User(user_info)
 
 	#Returns all the cubes for the current user
-	def get_cubes(self):
-		current_user = self.get_current_user()
+	def get_cubes(self, user=None):
+		if user is None:
+			current_user = self.get_current_user()
+		else:
+			current_user = user
+	
 		#gets info about the cube and the profile id when it was last updated
 		cubes_info = self.db.query("SELECT Cube.id, owner, unique_id, position, time as last_transition, (SELECT profile_id FROM Profile INNER JOIN ProfileTransition ON ProfileTransition.profile_id = Profile.id WHERE last_transition > time ORDER BY time DESC LIMIT 1) as corresponding_profile FROM Cube LEFT OUTER JOIN (SELECT cube_id, position, time FROM Transition ORDER BY time DESC) as alias ON cube_id = Cube.id WHERE owner=%s GROUP BY Cube.id;", current_user.user_id);
 
