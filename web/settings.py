@@ -76,7 +76,7 @@ class ProfileCreateHandler(BaseHandler):
 		self.redirect("/settings")	
 
 #Deals with changing the profile of a cube
-class CubeUpdateHandler(BaseHandler):
+class CubeProfileHandler(BaseHandler):
 	@tornado.web.authenticated
 	def post(self):
 		profile_id = self.get_argument("pid")
