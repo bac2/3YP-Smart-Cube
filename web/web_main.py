@@ -65,7 +65,7 @@ class AboutHandler(BaseHandler):
 		self.render("about.html", **self.params)
 
 def main():
-	define("port", default=8080, help="Run on the given port", type=int)
+	define("port", default=80, help="Run on the given port", type=int)
 	define("mysql_user", default='cube', help='User to connect to database with')
 	define("mysql_password", default='cubism_rules', help="Password to connect to mysql")
 	define("mysql_host", default='localhost', help='Host to connect to')

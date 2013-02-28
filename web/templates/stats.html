@@ -15,6 +15,9 @@
 		<h2>Statistics</h2>
 		Here you can see your usage statistics
 	</div>
+	{% if len(cubes) == 0 %}
+	    <span>You have no data from your Smart-Cubes!</span>
+	{% end %}
 	{% for cube in cubes %}
 	    <div class="cube" cube_id="{{cube.cube_id}}">
 		<h3>Smart-Cube {{ cube.code }}</h3>
