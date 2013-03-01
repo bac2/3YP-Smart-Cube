@@ -14,10 +14,13 @@ $(document).ready(function() {
 			var cubes_data = [];
 			if( data.length > 0) {
 				cubes_data = JSON.parse(data);
+			} 
+			if( cubes_data.length > 0 ) {
+				generatePie(cube, cubes_data);
+				generateGantt(cube, cubes_data);
+			} else {	
+				$(cube).children("h4").html("There is no data for the current profile yet.<br/>Has your Smart-Cube updated since you last changed profile?");	
 			}
-			
-			generatePie(cube, cubes_data);
-			generateGantt(cube, cubes_data);
 		});
 	});
 });
