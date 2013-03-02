@@ -34,7 +34,15 @@
 			You have no friends!
 			{% else %}
 				{%for friend in friends %}
-				<li>{{friend.name}}</li>
+				<div class="friend">{{friend.name}} is
+					{% for cube in friend.cubes %}
+						{% if cube.corresponding_profile is None %}
+							<li>awaiting a cube update (Smart-Cube {{cube.code}})</li>
+						{% else %}
+							<li>{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}} (Smart-Cube {{cube.code}})</li>
+						{% end %}
+					{% end %}
+				</div>
 				{% end %}
 			{% end %}
 		</div>

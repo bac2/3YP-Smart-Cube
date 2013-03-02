@@ -1,9 +1,23 @@
-function updateProfile(profile_id, cube_id) {
-	console.log(profile_id);
-	$.post("/settings/cube?pid="+profile_id+"&cid="+cube_id, function(data) {
-		$("#pname" + cube_id).html(data);
+function updateProfile() {
+	var cube = $(this).parents(".cube");
+	var cube_id = cube.attr("cube_id");
+	var profile_id = $(this).attr("profile_id");
+	var dropdown_text = cube.find(".pname")
+	$.post("/settings/cube/"+cube_id+"/profile/"+profile_id, function(data) {
+		dropdown_text.html(data);
 	});
-	$("#pname" + cube_id).html("...");
+	dropdown_text.html("...");
+}
+
+function setPublic() {
+	var cube = $(this).parents(".cube");
+	var cube_id = cube.attr("cube_id");
+	var value = ($(this).html() == "Yes") ? 1 : 0;
+	var dropdown_text = cube.find(".public_state");
+	$.post("/settings/cube/"+cube_id+"/public/"+value, function(data) {
+		dropdown_text.html(data);
+	});
+	dropdown_text.html("...");
 }
 
 function delete_profile() {
@@ -65,11 +79,28 @@ function edit_profile() {
 }
 
 $(document).ready(function() {
+	$.each( $('.cube'), function( i, cube ) {
+		
+		$(cube).children(".active_profile").find("ul").find("a").each(function( i, ele ){
+			$(ele).click( updateProfile );
+		});
+		$(cube).children(".public").find("ul").find("a").each( function( i, ele) {
+			$(ele).click( setPublic );
+		});
+	});
 	$.each( $('.profile'), function(i, profile) {
 		$(profile).children("#edit").click( edit_profile );
 		$(profile).children('#confirm').click( post_edit );
 		$(profile).children('#confirm').hide();
 
 		$(profile).children("#delete").click(delete_profile);
+	});
+	$('.collapse').on( {
+		shown: function() {
+			$(this).css('overflow', 'visible');
+		},
+		hide: function() {
+			$(this).css('overflow', 'visible');
+		}
 	});
 });	

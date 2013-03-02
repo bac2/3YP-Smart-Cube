@@ -4,6 +4,8 @@ class User():
 		self.name = user_info['name']
 		self.email = user_info['email']
 		self.user_id = user_info['id']
+		#set elsewhere
+		self.cubes = None
 	
 	def __str__(self):
 		return str({'name':self.name, 'email':self.email, 'user_id':self.user_id})
@@ -24,6 +26,7 @@ class Cube():
 		self.code = cube_info['unique_id']
 		self.rotation = cube_info['position']
 		self.last_transition = cube_info['last_transition']
+		self.public = cube_info['public']
 		#These are set externally
 		self.profile = None
 		self.corresponding_profile = None

@@ -76,11 +76,9 @@ class ProfileCreateHandler(BaseHandler):
 		self.redirect("/settings")	
 
 #Deals with changing the profile of a cube
-class CubeUpdateHandler(BaseHandler):
+class CubeProfileHandler(BaseHandler):
 	@tornado.web.authenticated
-	def post(self):
-		profile_id = self.get_argument("pid")
-		cube_id = self.get_argument("cid")
+	def post(self, cube_id, profile_id):
 		
 		profile_name = self.save_profile(cube_id, profile_id)
 		
@@ -93,3 +91,16 @@ class CubeUpdateHandler(BaseHandler):
 		profile = self.db.get("SELECT * FROM Profile WHERE id = %s", profile_id)
 		return profile['name']
 
+class CubePublicHandler(BaseHandler):
+	@tornado.web.authenticated
+	def post(self, cube_id, value):
+		self.save_public(cube_id, value)
+		if value == 1:
+			value='Yes'
+		else:
+			value='No'
+		
+		self.write(value)
+
+	def save_public(self):
+		self.db.execute("UPDATE Cube SET public=%s WHERE id=%s", value, cube_id)

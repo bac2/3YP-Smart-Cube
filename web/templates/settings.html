@@ -11,35 +11,56 @@
 	<div class="row-fluid">
 		<div class="span9">
 		    <a class="btn" data-toggle="collapse" data-target=".cubes-collapse" style="margin-bottom: 20px;">Smart-Cubes</a>
-		    <div class="collapse cubes-collapse">
+		    <div class="collapse cubes-collapse" style="z-index: 1000">
 			<div class="well">
 			    {% if len(cubes) == 0 %}
 				You have no registered Smart-Cubes!
 			    {% else %}
 				{% for cube in cubes %}
+				    <div class="cube" cube_id="{{cube.cube_id}}">
 					<strong>Smart-Cube {{ cube.code }}</strong><br/>
-					Active Profile: 
-					<span id="pname{{cube.cube_id}}">
-					{% if cube.profile is None %}
-						None
-					{% else %}
-						{{cube.profile.name}}
-					{% end %}
-					</span>
+					<div class="active_profile">
+						Active Profile: 
 						<div class="btn-group">
 						    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						        Change profile
+							<span class="pname">
+							{% if cube.profile is None %}
+								None
+							{% else %}
+								{{cube.profile.name}}
+							{% end %}
+							</span>
 						        <span class="caret"></span>
 						    </a>
 						    <ul class="dropdown-menu" role="menu">
 						        {% for profile in profiles %}
-							    <li><a tabindex="-1" onclick="updateProfile({{profile.profile_id}}, {{cube.cube_id}})" href="#">{{profile.name}}</a></li>	
+							    <li><a tabindex="-1" profile_id="{{profile.profile_id}}" href="#">{{profile.name}}</a></li>	
 						        {% end %}
 						    </ul>
 						</div>
-					<br/>
-					<br/>
-
+						<br/>
+					</div>
+					<div class="public">
+						Is this cube public?
+						<div class="btn-group">
+						    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							<span class="public_state">
+							{% if cube.public %}
+								Yes
+							{% else %}
+								No
+							{% end %}
+							</span>
+						        <span class="caret"></span>
+						    </a>
+						    <ul class="dropdown-menu" style="z-index:1000;" role="menu">
+							<li><a tabindex="-1" href="#">Yes</a></li>
+							<li><a tabindex="-1" href="#">No</a></li>
+						    </ul>
+						</div>
+						<br/>
+					</div> <!-- public -->
+				    </div>
 				{% end %}
 			    {% end %}
 			</div>

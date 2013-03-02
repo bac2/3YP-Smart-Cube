@@ -37,7 +37,8 @@ class App(tornado.web.Application):
 			(r"/settings/profile", settings.ProfileCreateHandler),
 			(r"/settings/profile/delete/([0-9]+)", settings.ProfileDeleteHandler),
 			(r"/settings/profile/edit/([0-9]+)", settings.ProfileEditHandler),
-			(r"/settings/cube", settings.CubeUpdateHandler),
+			(r"/settings/cube/([0-9]+)/profile/([0-9]+)", settings.CubeProfileHandler),
+			(r"/settings/cube/([0-9]+)/public/([0-1])", settings.CubePublicHandler),
 			(r"/about", AboutHandler)
 			]
 		app_settings = dict(
@@ -58,6 +59,7 @@ class App(tornado.web.Application):
 
 class HomeHandler(BaseHandler):
 	def get(self):
+		self.params['public_cubes'] = self.get_cubes(public=True)
 		self.render('index.html', **self.params)
 
 class AboutHandler(BaseHandler):
