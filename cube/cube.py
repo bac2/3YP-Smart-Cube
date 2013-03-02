@@ -1,5 +1,5 @@
 from mma7455 import Accel 
-SECRET_CODE = 'f8cdb04495ded47615258f9dc6a3f4707fd2405434fefc3cbf4ef4e6'
+SECRET_CODE = 'a2257ab8dd11cb8797b412b12fc58a9caaf6e1181772cf68aeaba3ee'
 
 class Rotation:
 	def __init__(self, rotation, time):

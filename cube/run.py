@@ -18,18 +18,21 @@ l = Lock()
 def check_loop(l):
 	net = Network(cube)
 	prev_rotation = -1
-	while(1):
-		l.acquire()
-		cube.check_rotation()
-		current_rotation = cube.get_rotation()
-		l.release()
-		if(current_rotation != prev_rotation):
-			#Send it to the server
-			logging.info('Rotation changed from ', prev_rotation, ' to ', current_rotation)
-			rot = Rotation(current_rotation, datetime.datetime.now())
-			net.send_rotation_data(rot)
-		prev_rotation = current_rotation
-		time.sleep(10)
+	while(True):
+		try:
+			l.acquire()
+			cube.check_rotation()
+			current_rotation = cube.get_rotation()
+			l.release()
+			if(current_rotation != prev_rotation):
+				#Send it to the server
+				logging.info('Rotation changed from ', prev_rotation, ' to ', current_rotation)
+				rot = Rotation(current_rotation, datetime.datetime.now())
+				net.send_rotation_data(rot)
+			prev_rotation = current_rotation
+			time.sleep(10)
+		except Error, e:
+			logging.error(str(e))
 
 @route('/')
 def getRot():
@@ -42,9 +45,11 @@ def getRot():
 
 if(args.action == 'start'):
 	#Do some stuff...
+	import sys
+	sys.stdout = open("output.log", "w+")
 	logging.basicConfig(filename="cube.log")
 		
-	cube = Cube("123456")
+	cube = Cube("420320")
 	p = Process(target=check_loop, args=(l,))
 	p.start()
 	run(host='0.0.0.0', port=8080)
