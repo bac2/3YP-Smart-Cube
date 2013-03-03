@@ -7,6 +7,7 @@ import datetime
 import time
 import argparse
 import logging
+import sys
 
 #Programs main method...
 parser = argparse.ArgumentParser()
@@ -31,8 +32,9 @@ def check_loop(l):
 				net.send_rotation_data(rot)
 			prev_rotation = current_rotation
 			time.sleep(10)
-		except Error, e:
-			logging.error(str(e))
+		except StandardError, e:
+			print e
+			logging.error("Generic Error! " + str(e))
 
 @route('/')
 def getRot():
@@ -43,15 +45,29 @@ def getRot():
 	pos = {1:'UP',2:'DOWN',3:'LEFT',4:'RIGHT',5:'FRONT',6:'BACK'}
 	return template('Hello! Current upwards is {{rot}}', rot=pos[current_rot])
 
+def event_checker(l):
+	#Runs to check for events to flash the led
+	from events import EventChecker
+	l.acquire()
+	net = Network(cube)
+	l.release()
+
+	ec = EventChecker(net)
+	while True:
+		ec.check_events()
+		time.sleep(60)
+
 if(args.action == 'start'):
 	#Do some stuff...
-	import sys
-	sys.stdout = open("output.log", "w+")
-	logging.basicConfig(filename="cube.log")
+#	sys.stdout = open("/home/pi/3YP/cube/output.log", "w+")
+	logging.basicConfig(filename="/home/pi/3YP/cube/cube.log")
+	logging.info("Started cube running")
 		
 	cube = Cube("420320")
 	p = Process(target=check_loop, args=(l,))
 	p.start()
+	p2 = Process(target=event_checker, args=(l,))
+	p2.start()
 	run(host='0.0.0.0', port=8080)
 
 

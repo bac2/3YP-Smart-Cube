@@ -5,6 +5,7 @@ import hmac
 import hashlib
 from log import Log 
 from cube import Rotation
+from requests.exceptions import ConnectionError
 
 POST_URL = 'http://bubuntu-vm.lan:8080'
 
@@ -27,8 +28,8 @@ class Network:
 			print response.content
 
 			self.check_log()
-		except IOError as  e:
-			print e
+		except ConnectionError as e:
+			logging.error("Network Failure:"+ str(e))
 
 			#We have a problem. Write it to the log file!
 			self.log.write_to_log(rotation)
@@ -39,8 +40,38 @@ class Network:
 		if data == False:
 			return
 
+		print data
+
 		for rot in data:
 			self.send_rotation_data(rot)
+
+	def get_events(self):
+		import json
+		import hmac
+		import hashlib
+		url = POST_URL + "/events/"+self.cube_code
+		try:
+			response = requests.get(url)
+		except:
+			#If it doesn't work, try again in 60 seconds
+			return
+		reply = response.content
+		events = json.loads(reply)
+
+		accepted_events = []
+		for event in events:
+			hmac_obj = hmac.new(str(self.secret_code), str(event['action'])+str(event['rotation']), hashlib.sha224)
+			digest = hmac_obj.hexdigest()
+			if digest == event['digest']:
+				accepted_events.append(event)
+			else:
+				print "Digests dont match: "+digest + " AND "+event['digest']
+
+		return accepted_events
+			
+
+
+
 
 if __name__ == '__main__':
 	net = Network()
