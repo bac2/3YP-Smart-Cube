@@ -1,176 +1,180 @@
 {% extends "base.html" %}	    
 {% block js %}
-    <script src="{{ static_url("js/settings.js") }}"></script>
+<script src="{{ static_url("js/settings.js") }}"></script>
 {% end %}
 {% block content %}
-    <div class="span9">
+<div class="span9">
 	<div class="hero-unit main-header">
-	    <h2>Settings</h2>
-	    Here you can set the profile information for your cube, change your stored information and set up other account preferences. 
+		<h2>Settings</h2>
+		Here you can set the profile information for your cube, change your stored information and set up other account preferences. 
 	</div>
 	<div class="row-fluid">
 		<div class="span9">
-		    <a class="btn" data-toggle="collapse" data-target=".cubes-collapse" style="margin-bottom: 20px;">Smart-Cubes</a>
-		    <div class="collapse cubes-collapse" style="z-index: 1000">
-			<div class="well">
-			    {% if len(cubes) == 0 %}
-				You have no registered Smart-Cubes!
-			    {% else %}
-				{% for cube in cubes %}
-				    <div class="cube" cube_id="{{cube.cube_id}}">
-					<strong>Smart-Cube {{ cube.code }}</strong><br/>
-					<div class="active_profile">
-						Active Profile: 
-						<div class="btn-group">
-						    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-							<span class="pname">
-							{% if cube.profile is None %}
-								None
-							{% else %}
-								{{cube.profile.name}}
-							{% end %}
-							</span>
-						        <span class="caret"></span>
-						    </a>
-						    <ul class="dropdown-menu" role="menu">
-						        {% for profile in profiles %}
-							    <li><a tabindex="-1" profile_id="{{profile.profile_id}}" href="#">{{profile.name}}</a></li>	
-						        {% end %}
-						    </ul>
+			<a class="btn" data-toggle="collapse" data-target=".cubes-collapse" style="margin-bottom: 20px;">Smart-Cubes</a>
+			<div class="collapse cubes-collapse" >
+				<div class="well">
+					{% if len(cubes) == 0 %}
+					You have no registered Smart-Cubes!
+					{% else %}
+					{% for cube in cubes %}
+					<div class="cube" cube_id="{{cube.cube_id}}">
+						<strong>Smart-Cube {{ cube.code }}</strong><br/>
+						<div class="active_profile">
+							Active Profile: 
+							<div class="btn-group">
+								<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+									<span class="pname">
+										{% if cube.profile is None %}
+										None
+										{% else %}
+										{{cube.profile.name}}
+										{% end %}
+									</span>
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									{% for profile in profiles %}
+									<li><a tabindex="-1" profile_id="{{profile.profile_id}}" href="#">{{profile.name}}</a></li>	
+									{% end %}
+								</ul>
+							</div>
+							<br/>
 						</div>
+						<div class="public">
+							Is this cube public?
+							<div class="btn-group">
+								<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+									<span class="public_state">
+										{% if cube.public %}
+										Yes
+										{% else %}
+										No
+										{% end %}
+									</span>
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a tabindex="-1" href="#">Yes</a></li>
+									<li><a tabindex="-1" href="#">No</a></li>
+								</ul>
+							</div>
+							<br/>
+						</div> <!-- public -->
+					</div>
+					{% end %}
+					{% end %}
+				</div>
+			</div>
+			<a class="btn" data-toggle="collapse" data-target=".profiles-collapse" style="margin-bottom: 20px;">Profiles</a>
+			<div class="collapse profiles-collapse">
+				<div class="well">
+					{% if len(profiles) == 0 %}
+					You have no profiles! A Smart-Cube uses profiles to describe what a side means. You can have many profiles and swap between them for each cube you own. <br/>
+					{% else %}
+					{% for profile in profiles %}
+					<div class="profile" profile_id="{{profile.profile_id}}">
+						<button type="button" id="delete" class="close">&times;</button>
+						<button type="button" id="edit" class="close">✎</button>
+						<button type="button" id="confirm" class="close">✔</button>
+						<strong><span id="name">{{ profile.name }}</span></strong><br/>
+						Tag line: <span id="tagline">{{ profile.describe_line }}</span><br/>
+						{% for index, side in zip(range(0, len(profile.sides)), profile.sides) %}
+						Side {{index+1}}:   <span id="side{{index+1}}">{{side}}</span><br/>
+						{% end %}
 						<br/>
 					</div>
-					<div class="public">
-						Is this cube public?
-						<div class="btn-group">
-						    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-							<span class="public_state">
-							{% if cube.public %}
-								Yes
-							{% else %}
-								No
-							{% end %}
-							</span>
-						        <span class="caret"></span>
-						    </a>
-						    <ul class="dropdown-menu" style="z-index:1000;" role="menu">
-							<li><a tabindex="-1" href="#">Yes</a></li>
-							<li><a tabindex="-1" href="#">No</a></li>
-						    </ul>
-						</div>
-						<br/>
-					</div> <!-- public -->
-				    </div>
-				{% end %}
-			    {% end %}
-			</div>
-		    </div>
-		    <a class="btn" data-toggle="collapse" data-target=".profiles-collapse" style="margin-bottom: 20px;">Profiles</a>
-		    <div class="collapse profiles-collapse">
-			<div class="well">
-			    {% if len(profiles) == 0 %}
-				You have no profiles! A Smart-Cube uses profiles to describe what a side means. You can have many profiles and swap between them for each cube you own. <br/>
-			    {% else %}
-				{% for profile in profiles %}
-				    <div class="profile" profile_id="{{profile.profile_id}}">
-					<button type="button" id="delete" class="close">&times;</button>
-					<button type="button" id="edit" class="close">✎</button>
-					<button type="button" id="confirm" class="close">✔</button>
-					<strong><span id="name">{{ profile.name }}</span></strong><br/>
-					Tag line: <span id="tagline">{{ profile.describe_line }}</span><br/>
-					{% for index, side in zip(range(0, len(profile.sides)), profile.sides) %}
-						Side {{index+1}}:   <span id="side{{index+1}}">{{side}}</span><br/>
 					{% end %}
-					<br/>
-				    </div>
-				{% end %}
-				
-			    {% end %}
-				<a class="btn" data-toggle="modal" href="#profile_create">Create a new profile</a>
+
+					{% end %}
+					<a class="btn" data-toggle="modal" href="#profile_create">Create a new profile</a>
+				</div>
 			</div>
-		    </div>
-		    <a class="btn" data-toggle="collapse" data-target=".events-collapse" style="margin-bottom: 20px;">Events</a>
-		    <div class="collapse events-collapse">
-			<div class="well">
-			    {% if len(events) == 0 %}
-				You have no events set up!
-			    {% end %}
+			<a class="btn" data-toggle="collapse" data-target=".events-collapse" style="margin-bottom: 20px;">Events</a>
+			<div class="collapse events-collapse">
+				<div class="well">
+					{% if len(events) == 0 %}
+					You have no events set up!
+					{% else %}
+						{% for event in events %}
+						<span class="event">{{event.rotation}}, {{event.action}}</span>
+						{% end %}
+					{% end %}
+				</div>
 			</div>
-		    </div>
-		    <a class="btn" data-toggle="collapse" data-target=".account-collapse" style="margin-bottom: 20px;">Account</a>
-		    <div class="collapse account-collapse">
-			<div class="well">
-			    Account!
+			<a class="btn" data-toggle="collapse" data-target=".account-collapse" style="margin-bottom: 20px;">Account</a>
+			<div class="collapse account-collapse">
+				<div class="well">
+					Account!
+				</div>
 			</div>
-		    </div>
 		</div>
 
 		<!-- Profile creation modal -->
 		<div id="profile_create" class="modal hide fade">
-		  <form class="form-horizontal" method="post" action="/settings/profile" >
-		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		    <h3>Create a profile</h3>
-		  </div>
-		  <div class="modal-body">
-		    <p>A profile is used to interpret what your Smart-Cube means.</p>
-		      <div class="control-group">
-			<label class="control-label" for="p_name">Profile name</label>
-			<div class="controls">
-		          <input type="text" name="name" id="p_name"/><br/>
-			</div>
-		      </div>
-		      <div class="control-group">
-			<label class="control-label" for="p_desc">Tag line</label>
-			<div class="controls">
-		          <input type="text" name="desc" id="p_desc"/><br/>
-			</div>
-		      </div>
-		      <div class="control-group">
-			<label class="control-label" for="p_s1">Top</label>
-			<div class="controls">
-		          <input type="text" name="s1" id="p_s1"/><br/>
-			</div>
-		      </div>
-		      <div class="control-group">
-			<label class="control-label" for="p_s2">Bottom</label>
-			<div class="controls">
-		          <input type="text" name="s2" id="p_s2"/><br/>
-			</div>
-		      </div>
-		      <div class="control-group">
-			<label class="control-label" for="p_s3">Left</label>
-			<div class="controls">
-		          <input type="text" name="s3" id="p_s3"/><br/>
-			</div>
-		      </div>
-		      <div class="control-group">
-			<label class="control-label" for="p_s4">Right</label>
-			<div class="controls">
-		          <input type="text" name="s4" id="p_s4"/><br/>
-			</div>
-		      </div>
-		      <div class="control-group">
-			<label class="control-label" for="p_s5">Front</label>
-			<div class="controls">
-		          <input type="text" name="s6" id="p_s5"/><br/>
-			</div>
-		      </div>
-		      <div class="control-group">
-			<label class="control-label" for="p_s6">Back</label>
-			<div class="controls">
-		          <input type="text" name="s5" id="p_s6"/><br/>
-			</div>
-		      </div>
-		  </div>
-		  <div class="modal-footer">
-		    <button href="#" class="btn" data-action="dismiss">Close</a>
-		    <button href="#" type="submit" class="btn btn-primary">Save changes</a>
-		  </div>
-		  </form>
+			<form class="form-horizontal" method="post" action="/settings/profile" >
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3>Create a profile</h3>
+				</div>
+				<div class="modal-body">
+					<p>A profile is used to interpret what your Smart-Cube means.</p>
+					<div class="control-group">
+						<label class="control-label" for="p_name">Profile name</label>
+						<div class="controls">
+							<input type="text" name="name" id="p_name"/><br/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="p_desc">Tag line</label>
+						<div class="controls">
+							<input type="text" name="desc" id="p_desc"/><br/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="p_s1">Top</label>
+						<div class="controls">
+							<input type="text" name="s1" id="p_s1"/><br/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="p_s2">Bottom</label>
+						<div class="controls">
+							<input type="text" name="s2" id="p_s2"/><br/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="p_s3">Left</label>
+						<div class="controls">
+							<input type="text" name="s3" id="p_s3"/><br/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="p_s4">Right</label>
+						<div class="controls">
+							<input type="text" name="s4" id="p_s4"/><br/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="p_s5">Front</label>
+						<div class="controls">
+							<input type="text" name="s6" id="p_s5"/><br/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="p_s6">Back</label>
+						<div class="controls">
+							<input type="text" name="s5" id="p_s6"/><br/>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button href="#" class="btn" data-action="dismiss">Close</a>
+					<button href="#" type="submit" class="btn btn-primary">Save changes</a>
+				</div>
+			</form>
 		</div>	
 	</div>
-    </div>
+</div>
 {% end %}
 
 

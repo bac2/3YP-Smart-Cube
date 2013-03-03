@@ -39,6 +39,7 @@ CREATE TABLE Cube (
 	secret_key VARCHAR(56),
 	owner INT,
 	unique_id VARCHAR(6),
+	public BOOL,
 	PRIMARY KEY(id),
 	FOREIGN KEY (`owner`)
 		REFERENCES `User`(`id`)
@@ -67,8 +68,8 @@ CREATE TABLE Friend (
 		REFERENCES `User`(`id`)
 ) ENGINE InnoDB;
 
-CREATE Table Transition (
-	id INT,
+CREATE TABLE Transition (
+	id INT AUTO_INCREMENT,
 	position INT(6),
 	time DATETIME,
 	cube_id INT,
@@ -77,7 +78,20 @@ CREATE Table Transition (
 		REFERENCES `Cube`(`id`)
 ) ENGINE InnoDB;
 
+CREATE TABLE Event (
+	id INT AUTO_INCREMENT,
+	owner INT,
+	cube_id INT,
+	action VARCHAR(30),
+	PRIMARY KEY(id),
+	FOREIGN KEY (`cube_id`)
+		REFERENCES `Cube`(`id`)
+	FOREIGN KEY (`owner`)
+		REFERENCES `User`(`id`)
+) ENGINE InnoDB;
+
 ALTER TABLE User ADD CONSTRAINT user_fk1 FOREIGN KEY `User`(`default_cube`)
 		REFERENCES `Cube`(`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
+

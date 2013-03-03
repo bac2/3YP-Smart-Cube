@@ -100,7 +100,7 @@ $(document).ready(function() {
 			$(this).css('overflow', 'visible');
 		},
 		hide: function() {
-			$(this).css('overflow', 'visible');
+			$(this).css('overflow', 'hidden');
 		}
 	});
 });	

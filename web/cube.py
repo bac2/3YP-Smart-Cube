@@ -24,6 +24,10 @@ class UpdateHandler(BaseHandler):
 
 		#Do some stuff here - Add a rotation to the database
 		self.db.execute("INSERT INTO Transition (position, time, cube_id) VALUES (%s, %s, %s);", rotation, time, cube_info['id'])
+
+        def check_events(self, cube_id, position):
+           #Check for any events which are triggered 
+           self.db.execute("UPDATE Event SET seen=NULL WHERE cube_id=%s AND rotation=%s", cube_id, position)
 		
 
 class RegisterHandler(BaseHandler):
