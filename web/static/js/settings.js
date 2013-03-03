@@ -78,6 +78,15 @@ function edit_profile() {
 
 }
 
+function delete_event() {
+	var event_id= $(this).parent().attr("event_id");
+	var event_item = $(this).parent();
+
+	$.post("/settings/event/delete/"+event_id, function(data) {
+		event_item.hide();
+	});
+}
+
 $(document).ready(function() {
 	$.each( $('.cube'), function( i, cube ) {
 		
@@ -94,6 +103,10 @@ $(document).ready(function() {
 		$(profile).children('#confirm').hide();
 
 		$(profile).children("#delete").click(delete_profile);
+	});
+
+	$.each( $('.event'), function(i, event_item) {
+		$(event_item).children("#delete").click(delete_event);
 	});
 	$('.collapse').on( {
 		shown: function() {

@@ -40,6 +40,7 @@ class App(tornado.web.Application):
 			(r"/settings/cube/([0-9]+)/profile/([0-9]+)", settings.CubeProfileHandler),
 			(r"/settings/cube/([0-9]+)/public/([0-1])", settings.CubePublicHandler),
                         (r"/settings/event/([0-9]+)", settings.EventCreateHandler),
+                        (r"/settings/event/delete/([0-9]+)", settings.EventDeleteHandler),
                         (r"/events/([0-9]{6})", settings.EventHandler),
                         (r"/events/web", settings.EventWebHandler),
                         (r"/events/web/([0-9]+)", settings.EventWebHandler),

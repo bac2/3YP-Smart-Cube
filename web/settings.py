@@ -133,6 +133,13 @@ class EventCreateHandler(BaseHandler):
                 
                 self.db.execute("INSERT INTO Event (cube_id, owner, action, rotation, profile_id) VALUES (%s, %s, %s, %s, %s);", cube_id, current_user.user_id, action, side, profile_id);
 
+class EventDeleteHandler(BaseHandler):
+        @tornado.web.authenticated
+        def post(self, event_id):
+            self.db.execute("DELETE FROM Event WHERE id=%s;", event_id);
+            self.write("success")
+            
+
 class EventHandler(BaseHandler):
         def get(self, cube_code):
             import json
