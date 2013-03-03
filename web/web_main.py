@@ -30,8 +30,8 @@ class App(tornado.web.Application):
 			(r"/friends", friends.FriendsHandler),
 			(r"/statistics", stats.StatsHandler),
 			(r"/statistics/([0-9]+)", stats.StatsDataHandler),
-			(r"/update/([A-Za-z0-9]{6})", cube.UpdateHandler),
-			(r"/register/([A-Z0-9a-z]{6})", cube.RegisterHandler),
+			(r"/update/([0-9]{6})", cube.UpdateHandler),
+			(r"/register/([0-9]{6})", cube.RegisterHandler),
 			(r"/register", cube.RegisterHandler),
 			(r"/settings", settings.SettingsHandler),
 			(r"/settings/profile", settings.ProfileCreateHandler),
@@ -39,6 +39,10 @@ class App(tornado.web.Application):
 			(r"/settings/profile/edit/([0-9]+)", settings.ProfileEditHandler),
 			(r"/settings/cube/([0-9]+)/profile/([0-9]+)", settings.CubeProfileHandler),
 			(r"/settings/cube/([0-9]+)/public/([0-1])", settings.CubePublicHandler),
+                        (r"/settings/event/([0-9]+)", settings.EventCreateHandler),
+                        (r"/events/([0-9]{6})", settings.EventHandler),
+                        (r"/events/web", settings.EventWebHandler),
+                        (r"/events/web/([0-9]+)", settings.EventWebHandler),
 			(r"/about", AboutHandler)
 			]
 		app_settings = dict(

@@ -3,29 +3,29 @@
 {% block content %}
 <div class="span9">
 	<div class="hero-unit main-header">
-	    <h2>Your status</h2>
-	    {% if len(cubes) == 0 %}
-	    You haven't registered any Smart-Cubes!
-	    {% else %}
-	        {% for cube in cubes %}
-		    <div class="well">
-		        Smart-Cube {{cube.code}}<br/>
+		<h2>Your status</h2>
+		{% if len(cubes) == 0 %}
+		You haven't registered any Smart-Cubes!
+		{% else %}
+		{% for cube in cubes %}
+		<div class="well">
+			Smart-Cube {{cube.code}}<br/>
 			{% if cube.corresponding_profile is None %}
 			There was no profile attached to this Smart-Cube when it was last updated.
-			  {% if cube.profile is None %}
-				Attach a profile <a href="/settings">in the settings</a>.
-			  {% else %}
-				Your current profile will come into effect on the next update.
-			  {% end %}
+			{% if cube.profile is None %}
+			Attach a profile <a href="/settings">in the settings</a>.
 			{% else %}
-		        You are {{ cube.corresponding_profile.describe_line }} {{ cube.corresponding_profile.sides[cube.rotation-1] }}.
-		        <div class="pull-right" style="font-size: 10pt;">
-			    Last Updated: {{str(cube.last_transition.hour) + ":" + str(cube.last_transition.minute)}}
-		        </div>
+			Your current profile will come into effect on the next update.
 			{% end %}
-		    </div>
+			{% else %}
+			You are {{ cube.corresponding_profile.describe_line }} {{ cube.corresponding_profile.sides[cube.rotation-1] }}.
+			<div class="pull-right" style="font-size: 10pt;">
+				Last Updated: {{str(cube.last_transition.hour) + ":" + str(cube.last_transition.minute)}}
+			</div>
+			{% end %}
+		</div>
 		{% end %}
-	    {% end %}
+		{% end %}
 	</div>
 	<div class="row-fluid">
 		<div class="span12">
@@ -33,18 +33,59 @@
 			{% if len(friends) ==  0 %}
 			You have no friends!
 			{% else %}
-				{%for friend in friends %}
-				<div class="friend">{{friend.name}} is
-					{% for cube in friend.cubes %}
-						{% if cube.corresponding_profile is None %}
-							<li>awaiting a cube update (Smart-Cube {{cube.code}})</li>
-						{% else %}
-							<li>{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}} (Smart-Cube {{cube.code}})</li>
-						{% end %}
-					{% end %}
+			{%for friend in friends %}
+			<div class="friend">{{friend.name}} is
+				{% for cube in friend.cubes %}
+				{% if cube.corresponding_profile is None %}
+				<li>awaiting a cube update (Smart-Cube {{cube.code}})</li>
+				{% else %}
+				<div class="cube" cube_id="{{cube.cube_id}}">{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}} (Smart-Cube {{cube.code}}) <a class='btn add-event push-right' data-toggle="modal" href="#event_create{{cube.cube_id}}">Add event</a>
+
+					<!-- Profile creation modal -->
+					<div id="event_create{{cube.cube_id}}" class="modal hide fade">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h3>Add Event</h3>
+						</div>
+						<div class="modal-body">
+							<p>An event will notify you when a friend's state changes to the one specified below</p>
+							<div class="control-group">
+								<label class="control-label" for="side_select">Side</label>
+								<div class="controls">
+									<select id="side_select">
+										{% for i, side in zip(range(1,7), cube.profile.sides) %}
+										<option value="{{i}}">{{side}}</option>
+										{% end %}
+									</select>	
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="action_select">Action</label>
+								<div class="controls">
+									<select id="action_select" profile_id="{{cube.profile.profile_id}}">
+										<option value="flashLED">Flash Smart-Cube LED</option>
+										<option value="email">Email me a notification</option>
+										<option value="sound">Play notification sound</option>
+									</select>
+								</div>
+							</div>
+						</div><!-- END BODY -->
+						<div class="modal-footer">
+							<button href="#" class="btn" data-dismiss="modal">Close</a>
+							<button href="#" type="submit" class="btn btn-primary">Save changes</a>
+						</div>
+					</div><!-- END MODAL -->	
 				</div>
-				{% end %}
+			</div>	
+			{% end %}
 			{% end %}
 		</div>
+		{% end %}
+		{% end %}
 	</div>
+</div>
+{% end %}
+
+{% block js %}
+	<script src="{{	static_url("js/friends.js") }}"></script>
 {% end %}

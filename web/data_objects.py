@@ -37,3 +37,11 @@ class Transition():
 		self.position = transition_info['position']
 		self.cube_id = transition_info['cube_id']
 		self.side_name = transition_info['sidename']
+
+class Event():
+    def __init__(self, event_info):
+            self.owner = event_info['owner']
+            self.rotation = event_info['rotation']
+            self.cube_id = event_info['cube_id']
+            self.action = event_info['action']
+            self.profile_id = event_info['profile_id']
