@@ -40,8 +40,14 @@ class Transition():
 
 class Event():
     def __init__(self, event_info):
-            self.owner = event_info['owner']
-            self.rotation = event_info['rotation']
-            self.cube_id = event_info['cube_id']
+            self.event_id = event_info['id']
+            self.name = event_info['name']
+            self.side_name = event_info['side_name']
+            self.cube_code = event_info['unique_code']
             self.action = event_info['action']
-            self.profile_id = event_info['profile_id']
+            if self.action == "email":
+                self.action_pretty = "email me"
+            elif self.action == "flashLED":
+                self.action_pretty = "flash the LED in my Smart-Cube"
+            elif self.action == "sound":
+                self.action_pretty = "play a sound from this website"

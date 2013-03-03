@@ -20,6 +20,8 @@ $(document).ready(function() {
 				generateGantt(cube, cubes_data);
 			} else {	
 				$(cube).children("h4").html("There is no data for the current profile yet.<br/>Has your Smart-Cube updated since you last changed profile?");	
+				$('.pie-placeholder').hide();
+				$('.gantt-placeholder').hide();
 			}
 		});
 	});
@@ -40,7 +42,7 @@ function formatterFunction(label, series) {
 
 	var seconds = Math.floor(time);
 	if(seconds < 10) seconds = "0"+seconds;
-	return '<div style="font-sizew:11px; text-align:center; color: white; padding:2px;">'+label+'<br/>'+days+' days '+hours+':'+minutes+':'+seconds+'<br/>'+Math.round(series.percent)+'%</div>';
+	return '<div style="font-size:11px; text-align:center; color: white; padding:2px;">'+label+'<br/>'+days+' days '+hours+':'+minutes+':'+seconds+'<br/>'+Math.round(series.percent)+'%</div>';
 }
 
 function generatePie(cube, cubes_data) {
@@ -139,7 +141,7 @@ function generateGantt(cube, cubes_data) {
 			}
 		},
 		xaxis: { mode: "time" },
-		yaxis: { min: -0.5, max: 6.5, ticks: ticks } 
+		yaxis: { min: -0.5, max: 6.5, ticks: ticks },
 	});
 
 }

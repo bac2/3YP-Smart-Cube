@@ -18,7 +18,7 @@ class SettingsHandler(BaseHandler):
                 
         def get_events(self):
                 current_user = self.get_current_user()
-                events_info = self.db.query("SELECT * FROM Event WHERE owner = %s", current_user.user_id)
+                events_info = self.db.query("SELECT (SELECT name FROM User WHERE id=owner) AS name, (SELECT (CASE rotation WHEN 1 THEN side1 WHEN 2 THEN side2 WHEN 3 THEN side3 WHEN 4 THEN side4 WHEN 5 THEN side5 WHEN 6 THEN side6 end) FROM Profile WHERE id=profile_id) AS side_name, (SELECT unique_id FROM Cube WHERE id=cube_id) AS unique_code, id, action FROM Event WHERE owner = %s", current_user.user_id)
                 
                 events = []
                 for event_info in events_info:

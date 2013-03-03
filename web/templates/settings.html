@@ -96,7 +96,7 @@
 					You have no events set up!
 					{% else %}
 						{% for event in events %}
-						<span class="event">{{event.rotation}}, {{event.action}}</span>
+						<span class="event">When {{event.name}} on Smart-Cube {{event.cube_code}} begins {{event.side_name}} then {{event.action_pretty}}.<br/><br/></span>
 						{% end %}
 					{% end %}
 				</div>
