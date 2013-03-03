@@ -40,14 +40,24 @@ echo 'Installing python requests...'
 pip install requests >/dev/null
 echo 'Installing python bottle...'
 easy_install -U bottle >/dev/null
+echo 'Installing python supervisor...'
+easy_install supervisor
+curl https://raw.github.com/gist/176149/88d0d68c4af22a7474ad1d011659ea2d27e35b8d/supervisord.sh > supervisord
+chmod +x supervisord
+mv supervisord /etc/init.d/supervisord
+update-rc.d supervisord defaults
+
+echo_supervisor_conf > /etc/supervisord.conf
+/etc/init.d/supervisord start
+
+echo [include] >> /etc/supervisord.conf
+echo files=/etc/supervisord/*.conf >> etc/supervisord.conf
+mkdir /etc/supervisord
+echo [program:cube] > /etc/supervisord/cube.conf
+echo command=/home/pi/3YP/cube/run.py start >> /etc/supervisord/cube.conf
+echo "" >> /etc/supervisord/cube.conf
+echo [program:wifi] >> /etc/supervisord/cube.conf
+echo command=/home/pi/3YP/wifi.py >> /etc/supervisord/cube.conf
+
+supervisorctl reload
 echo 'Installation Complete'
-
-echo 'Adding to startup (rc.local)...'
-sed 's/^exit 0/\/home\/pi\/3YP\/cube\/run.py start &\
-\
-&/' /etc/rc.local > temp
-cp temp /etc/rc.local
-rm temp
-
-#sudo shutdown -r now
-
