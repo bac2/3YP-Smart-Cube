@@ -87,7 +87,7 @@ function generatePie(cube, cubes_data) {
 				},
 				label: {
 					show: true,
-					radius: 2/3,
+					radius: 4/5,
 					formatter: formatterFunction,
 					background: {
 						opacity: 0.8,
@@ -130,18 +130,21 @@ function generateGantt(cube, cubes_data) {
 	for( var key in names ) {
 		ticks.push( [key, names[key]] );
 	}
-	graph_data = [ { "label":"states", "data":data_array } ];
+	graph_data = [ { label:"states", data:data_array } ];
 	
-	$(cube).children(".gantt-placeholder").plot(data_array, {
+	$(cube).children(".gantt-placeholder").plot(graph_data, {
 		series: {
 			gantt: {
 				active: true,
 				show: true,
-				barHeight: 1
-			}
+				barHeight: 0.5
+			},
+			nearBy: {},
+			grid:	{ hoverable:true, clickable:true }
+			
 		},
-		xaxis: { mode: "time" },
-		yaxis: { min: -0.5, max: 6.5, ticks: ticks },
+		xaxis:  { mode: "time" },
+		yaxis:  { min: -0.5, max: 6.5, ticks: ticks }
 	});
 
 }
