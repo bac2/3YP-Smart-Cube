@@ -106,14 +106,14 @@ class CubePublicHandler(BaseHandler):
 	@tornado.web.authenticated
 	def post(self, cube_id, value):
 		self.save_public(cube_id, value)
-		if value == 1:
-			value='Yes'
+		if value == '1':
+			response='Yes'
 		else:
-			value='No'
+			response='No'
 		
-		self.write(value)
+		self.write(response)
 
-	def save_public(self):
+	def save_public(self, cube_id, value):
 		self.db.execute("UPDATE Cube SET public=%s WHERE id=%s", value, cube_id)
 
 

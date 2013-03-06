@@ -1,5 +1,6 @@
 use 3yp;
-#ALTER TABLE User DROP FOREIGN KEY user_fk1;
+ALTER TABLE User DROP FOREIGN KEY user_fk1;
+DROP TABLE IF EXISTS Event;
 DROP TABLE IF EXISTS Friend;
 DROP TABLE IF EXISTS Profile;
 DROP TABLE IF EXISTS ProfileTransition;
@@ -83,11 +84,16 @@ CREATE TABLE Event (
 	owner INT,
 	cube_id INT,
 	action VARCHAR(30),
+	profile_id INT,
+	rotation INT,
+	seen datetime,
 	PRIMARY KEY(id),
 	FOREIGN KEY (`cube_id`)
 		REFERENCES `Cube`(`id`)
 	FOREIGN KEY (`owner`)
 		REFERENCES `User`(`id`)
+	FOREIGN KEY (`profile_id`)
+		REFERENCES `Profile`(`id`)
 ) ENGINE InnoDB;
 
 ALTER TABLE User ADD CONSTRAINT user_fk1 FOREIGN KEY `User`(`default_cube`)
