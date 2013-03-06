@@ -14,11 +14,11 @@ rm temp
 
 echo 'Generated Secret Code - ' $code 
 sed 's/Cube(\"[0-9]*\")/Cube\("'$number'"\)/' < cube/run.py >temp
-cp temp cube/run.py
+#cp temp cube/run.py
 rm temp
 
 sed "s/SECRET_CODE = '.*'$/SECRET_CODE = '"$code"'/" <cube/cube.py >temp
-cp temp cube/cube.py
+#cp temp cube/cube.py
 rm temp
 
 echo 'Installing i2c-tools...'
@@ -41,23 +41,23 @@ pip install requests >/dev/null
 echo 'Installing python bottle...'
 easy_install -U bottle >/dev/null
 echo 'Installing python supervisor...'
-easy_install supervisor
-curl https://raw.github.com/gist/176149/88d0d68c4af22a7474ad1d011659ea2d27e35b8d/supervisord.sh > supervisord
+easy_install supervisor >/dev/null
+curl https://raw.github.com/gist/176149/88d0d68c4af22a7474ad1d011659ea2d27e35b8d/supervisord.sh 1> supervisord 2>/dev/null
 chmod +x supervisord
 mv supervisord /etc/init.d/supervisord
-update-rc.d supervisord defaults
+update-rc.d supervisord defaults >/dev/null
 
-echo_supervisor_conf > /etc/supervisord.conf
-/etc/init.d/supervisord start
+echo_supervisord_conf > /etc/supervisord.conf
+/etc/init.d/supervisord start >/dev/null
 
 echo [include] >> /etc/supervisord.conf
-echo files=/etc/supervisord/*.conf >> etc/supervisord.conf
-mkdir /etc/supervisord
+echo files=/etc/supervisord/*.conf >> /etc/supervisord.conf
+mkdir /etc/supervisord 2>/dev/null
 echo [program:cube] > /etc/supervisord/cube.conf
 echo command=/home/pi/3YP/cube/run.py start >> /etc/supervisord/cube.conf
 echo "" >> /etc/supervisord/cube.conf
 echo [program:wifi] >> /etc/supervisord/cube.conf
 echo command=/home/pi/3YP/wifi.py >> /etc/supervisord/cube.conf
 
-supervisorctl reload
+supervisorctl reload >/dev/null
 echo 'Installation Complete'
