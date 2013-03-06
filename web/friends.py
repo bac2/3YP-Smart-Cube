@@ -24,8 +24,14 @@ class FriendsHandler(BaseHandler):
 		return users
 
 
-class FindFriendsHandler(BaseHandler):
+class AddFriendHandler(BaseHandler):
 	@tornado.web.authenticated
-	def get(self):
-		self.write("hello!")
-
+	def post(self):
+            current_user = self.get_current_user()
+            email = self.get_argument("email")
+            user = self.db.get("SELECT * FROM User WHERE email=%s;", email);
+            if user is not None:
+                self.db.execute("INSERT INTO Friend VALUES (%s, %s), (%s, %s);", current_user.user_id, user['id'], user['id'], current_user.user_id)
+                self.write("success")
+            else:
+                self.write("failed")

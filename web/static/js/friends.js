@@ -3,6 +3,8 @@ $(document).ready(function () {
 		footer = $(cube).find(".modal-footer");
 		footer.children(".btn-primary").click(createEvent);
 	});
+
+	$("#addfriend").children("button").click(addFriend);
 });
 
 function createEvent() {
@@ -14,8 +16,23 @@ function createEvent() {
 	profile_id = cube.find("#action_select").attr("profile_id")
 
 	$.post("/settings/event/"+cube_id+"?side="+side+"&action="+action+"&profile_id="+profile_id, function(data) {
-		if(data == "success") {
-			return;
-		}
-	});
+			if(data == "success") {
+				return;
+			}
+		});
+}
+
+function addFriend() {
+	email = $(this).parent().children("label").children("input").val()
+		$.post("/friends/add?email="+email, function(data) {
+			if(data == "success") {
+				$("#friendresult").html("Success!");
+			} else {
+				$("#friendresult").html("Email not found!");
+			}
+			$("#friendresult").show()
+			setTimeout(function() {
+				$("#friendresult").fadeOut(1000);
+			}, 2000);
+		});
 }

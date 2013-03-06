@@ -10,23 +10,46 @@ function time_sort(a, b) {
 
 $(document).ready(function() {
 	$.each($(".cube"), function(i, cube) {
-		$.get("/statistics/"+ $(cube).attr("cube_id"), function(data) {
-			var cubes_data = [];
-			if( data.length > 0) {
-				cubes_data = JSON.parse(data);
-			} 
-			if( cubes_data.length > 0 ) {
-				generatePie(cube, cubes_data);
-				generateGantt(cube, cubes_data);
-			} else {	
-				$(cube).children("h4").html("There is no data for the current profile yet.<br/>Has your Smart-Cube updated since you last changed profile?");	
-				$('.pie-placeholder').hide();
-				$('.gantt-placeholder').hide();
+		$(cube).find("ul").children().children().each(function(i, link) {
+			$(link).click(generateNewGraph);
+			if( i == 0 ) {
+				$(link).click();
 			}
 		});
 	});
 });
-		
+
+function generateNewGraph() {
+	cube = $(this).parents(".cube");
+	cube_id = cube.attr("cube_id");
+	profile_transition_id = $(this).attr("profile_transition_id");
+	//Grab the div
+	graph_div = $(cube).children(".profile_transition");
+	//Set the attribute
+	graph_div.attr("profile_transition_id", profile_transition_id);
+	//Get the data
+	$.get("/statistics/"+cube_id+"/transition/"+profile_transition_id, function(data) {
+		var cubes_data = [];
+		if( data.length > 0) {
+			cubes_data = JSON.parse(data);
+		} 
+		if( cubes_data.length > 0 ) {
+			generatePie(graph_div, cubes_data);
+			generateGantt(graph_div, cubes_data);
+			graph_div.show();
+			$(cube).children(".error").hide();
+			graph_div.find(".pieLabelBackground").each(function(i, background) {
+				$(background).css("height", "64px").css("width", "84px");
+			});
+		} else {	
+			$(cube).children(".error").show();
+			graph_div.hide();
+		}
+	});
+	var name = $(this).html();
+	$(this).parents(".btn-group").children().first().html(name + ' <span class="caret"></span>');
+}
+
 function formatterFunction(label, series) {
 	time = series.data[0][1];
 	var days = Math.floor(time / (3600*24));
@@ -45,45 +68,45 @@ function formatterFunction(label, series) {
 	return '<div style="font-size:11px; text-align:center; color: white; padding:2px;">'+label+'<br/>'+days+' days '+hours+':'+minutes+':'+seconds+'<br/>'+Math.round(series.percent)+'%</div>';
 }
 
-function generatePie(cube, cubes_data) {
+function generatePie(parent_div, cubes_data) {
 
 	cubes_data.sort(time_sort);	
 
 	var graph_labels = {};
 	var colors = ['#4572A7', '#80699B', '#AA4643', '#3D96AE', '#89A54E', '#23D53C', '#53D21A']
-	
-	$(cubes_data).each( function (i, transition) {
-		
-		if (transition.side_name == null) {
-			transition.side_name= "Unknown";
-		}
-		var to_date = new Date();
-		if( i != cubes_data.length-1 ) {
-			to_date = new Date(cubes_data[i+1].time);
-		}
-		var time_delta = to_date - new Date(transition.time);
-		transition.time_delta = time_delta / 1000; //MILLI TO SECS
-		
-		if(graph_labels.hasOwnProperty(transition.side_name)) {
-			label = graph_labels[transition.side_name];
-			label.data = label.data + time_delta/1000;
-		} else {
-			graph_labels[transition.side_name] = { label: transition.side_name, data: time_delta/1000, color: colors[transition.position]};
-		}
-	});
+
+		$(cubes_data).each( function (i, transition) {
+
+			if (transition.side_name == null) {
+				transition.side_name= "Unknown";
+			}
+			var to_date = new Date();
+			if( i != cubes_data.length-1 ) {
+				to_date = new Date(cubes_data[i+1].time);
+			}
+			var time_delta = to_date - new Date(transition.time);
+			transition.time_delta = time_delta / 1000; //MILLI TO SECS
+
+			if(graph_labels.hasOwnProperty(transition.side_name)) {
+				label = graph_labels[transition.side_name];
+				label.data = label.data + time_delta/1000;
+			} else {
+				graph_labels[transition.side_name] = { label: transition.side_name, data: time_delta/1000, color: colors[transition.position]};
+			}
+		});
 	var graph_data = [];
 	for (var key in graph_labels) {	
 		graph_data.push(graph_labels[key]);
 	}
 
-	$(cube).children(".pie-placeholder").plot(graph_data, {
+	$(parent_div).children(".pie-placeholder").plot(graph_data, {
 		series: {
 			pie: {
 				show: true,
 				combine: {
 					color: '#999',
 					threshold: 0.03
-					
+	
 				},
 				label: {
 					show: true,
@@ -106,42 +129,42 @@ function generatePie(cube, cubes_data) {
 
 }
 
-function generateGantt(cube, cubes_data) {
+function generateGantt(parent_div, cubes_data) {
 
 	data_array = []	
-	names = {}
+		names = {}
 	$(cubes_data).each( function (i, transition) {
 		data_item = []
-		
+
 		if (transition.side_name == null) {
 			transition.side_name= "Unknown";
 		}
-		names[transition.position] = transition.side_name;
-		var to_date = new Date();
-		if( i != cubes_data.length-1 ) {
-			to_date = new Date(cubes_data[i+1].time);
-		}
-		data_item = [ new Date(transition.time), transition.position, to_date, "Transition" ];
-		data_array.push(data_item);
+	names[transition.position] = transition.side_name;
+	var to_date = new Date();
+	if( i != cubes_data.length-1 ) {
+		to_date = new Date(cubes_data[i+1].time);
+	}
+	data_item = [ new Date(transition.time), transition.position, to_date, "Transition" ];
+	data_array.push(data_item);
 
 	});
-	
+
 	ticks = []
-	for( var key in names ) {
-		ticks.push( [key, names[key]] );
-	}
+		for( var key in names ) {
+			ticks.push( [key, names[key]] );
+		}
 	graph_data = [ { label:"states", data:data_array } ];
-	
-	$(cube).children(".gantt-placeholder").plot(graph_data, {
+
+	$(parent_div).children(".gantt-placeholder").plot(graph_data, {
 		series: {
 			gantt: {
 				active: true,
-				show: true,
-				barHeight: 0.5
+		show: true,
+		barHeight: 0.5
 			},
-			nearBy: {},
-			grid:	{ hoverable:true, clickable:true }
-			
+		nearBy: {},
+		grid:	{ hoverable:true, clickable:true }
+
 		},
 		xaxis:  { mode: "time" },
 		yaxis:  { min: -0.5, max: 6.5, ticks: ticks }

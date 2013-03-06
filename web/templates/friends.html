@@ -32,9 +32,17 @@
 			{% end %}
 			{% end %}
 			<h3>Friend Smart-Cubes</h3>
+			<div id="addfriend" style="margin-bottom:10px;"class="form-inline">
+				<label class="text">
+					Add friend by email address: <input type="text" placeholder="joe@bloggs.co.uk" id="friend_email" />
+				</label>
+				<button action="close" class="btn">Add friend</button>
+				<label id="friendresult"></label>
+			</div>
 			{% if len(friends) ==  0 %}
 			You have no friends!
 			{% else %}
+
 			{%for friend in friends %}
 			<div class="friend well">
 				{{friend.name}} is

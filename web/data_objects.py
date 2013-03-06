@@ -38,6 +38,14 @@ class Transition():
 		self.cube_id = transition_info['cube_id']
 		self.side_name = transition_info['sidename']
 
+class ProfileTransition():
+    def __init__(self, transition_info):
+            self.time = transition_info['time']
+            self.cube_id = transition_info['cube_id']
+            self.profile_transition_id = transition_info['id']
+            self.profile_name = transition_info['name']
+
+
 class Event():
     def __init__(self, event_info):
             self.event_id = event_info['id']
