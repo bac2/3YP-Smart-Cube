@@ -59,5 +59,19 @@ echo "" >> /etc/supervisord/cube.conf
 echo [program:wifi] >> /etc/supervisord/cube.conf
 echo command=/home/pi/3YP/wifi.py >> /etc/supervisord/cube.conf
 
+echo Installing noip client...
+cd /usr/local/src
+wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz
+tar -xzf noip-duc-linux.tar.gz
+cd no-ip-2.1.9-1
+make
+make install
+
+sed 's/^exit 0/\/usr\/local\/bin\/noip2\
+\
+&/' /etc/rc.local > temp
+cp temp /etc/rc.local
+rm temp
+
 supervisorctl reload
 echo 'Installation Complete'
