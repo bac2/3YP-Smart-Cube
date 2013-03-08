@@ -9,13 +9,13 @@ $(document).ready(function () {
 
 function createEvent() {
 	cube = $(this).parents(".cube");
-	cube_id = cube.attr("cube_id");
+	cube_id = cube.attr("cube_code");
 
 	side = cube.find("#side_select").val();
 	action = cube.find("#action_select").val();
 	profile_id = cube.find("#action_select").attr("profile_id")
 
-	$.post("/settings/event/"+cube_id+"?side="+side+"&action="+action+"&profile_id="+profile_id, function(data) {
+	$.post("/cube/"+cube_code+"/events/?side="+side+"&action="+action+"&profile_id="+profile_id, function(data) {
 			if(data == "success") {
 				return;
 			}
@@ -24,7 +24,7 @@ function createEvent() {
 
 function addFriend() {
 	email = $(this).parent().children("label").children("input").val()
-		$.post("/friends/add?email="+email, function(data) {
+		$.post("/friends?email="+email, function(data) {
 			if(data == "success") {
 				$("#friendresult").html("Success!");
 			} else {

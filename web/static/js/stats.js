@@ -21,14 +21,14 @@ $(document).ready(function() {
 
 function generateNewGraph() {
 	cube = $(this).parents(".cube");
-	cube_id = cube.attr("cube_id");
+	cube_code = cube.attr("cube_code");
 	profile_transition_id = $(this).attr("profile_transition_id");
 	//Grab the div
 	graph_div = $(cube).children(".profile_transition");
 	//Set the attribute
 	graph_div.attr("profile_transition_id", profile_transition_id);
 	//Get the data
-	$.get("/statistics/"+cube_id+"/transition/"+profile_transition_id, function(data) {
+	$.get("/cube/"+cube_code+"/transitions/profile-transition/"+profile_transition_id, function(data) {
 		var cubes_data = [];
 		if( data.length > 0) {
 			cubes_data = JSON.parse(data);

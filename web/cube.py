@@ -1,16 +1,32 @@
 from base_handler import BaseHandler
+from data_objects import User, Transition, ProfileTransition, Profile 
 import tornado.web
+import json
+import datetime
+
+class TransitionEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        elif isinstance(obj, Transition):
+            return { 'time':obj.time, 'position':obj.position, 'side_name':obj.side_name}
+
 class UpdateHandler(BaseHandler):
-	
+    
+        #Lists transitions for a given cube
+        @tornado.web.authenticated
+        def get(self, cube_code):
+	    self.write("Not yet implemented!")
+
 	#Receives an update from a cube
-	def post(self, unique_code):
+	def post(self, cube_code):
 		import hmac
 		import hashlib
 		rotation = self.get_argument("rotation")
 		time = self.get_argument("time")
 		digest = self.get_argument("digest")
 		#Get the cube key from the database
-		cube_info = self.db.get("SELECT id, secret_key, owner FROM Cube WHERE unique_id=%s", unique_code)
+		cube_info = self.db.get("SELECT id, secret_key, owner FROM Cube WHERE unique_id=%s", cube_code)
 		if not cube_info:
 			#We don't know about this cube
 			self.write("Unknown cube code")
@@ -27,23 +43,24 @@ class UpdateHandler(BaseHandler):
 
         def check_events(self, cube_id, position):
            #Check for any events which are triggered 
-           self.db.execute("UPDATE Event SET seen=NULL WHERE cube_id=%s AND rotation=%s", cube_id, position)
+           self.db.execute("UPDATE Event SET seen=NULL WHERE cube_id=(SELECT id FROM Cube WHERE unique_id=%s) AND rotation=%s", cube_code, position)
 		
 
 class RegisterHandler(BaseHandler):
 	
 	#Registers a cube to a user after scanning the QR code
 	@tornado.web.authenticated
-	def get(self, unique_code):
-		cube = self.db.get("SELECT * FROM Cube WHERE unique_id=%s", unique_code)
+	def get(self, cube_code):
+		cube = self.db.get("SELECT * FROM Cube WHERE unique_id=%s", cube_code)
 		self.params['complete'] = False
 		if cube:
 			self.params['registered'] = True
 		else:
 			self.params['registered'] = False
-			self.params['unique_code'] = unique_code
+			self.params['unique_code'] = cube_code
 		self.render('register.html', **self.params)
 
+        @tornado.web.authenticated
 	def post(self):
 		import hashlib
 		current_user = self.get_current_user()
@@ -52,3 +69,88 @@ class RegisterHandler(BaseHandler):
 		self.params['complete'] = True
 		self.render('register.html', **self.params)
 
+class ProfileTransitionHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, cube_code):
+        self.write("Profile transitions - TODO")
+
+class TransitionsHandler(BaseHandler):
+
+    @tornado.web.authenticated
+    def get(self, cube_code, profile_transition_id):
+        self.write(self.get_transitions(cube_code, profile_transition_id))
+
+    def get_transitions(self, cube_code, profile_transition_id):
+        transitions = self.db.query("SELECT position, time, cube_id, (SELECT (case position when 1 then side1 WHEN 2 THEN side2 WHEN 3 THEN side3 WHEN 4 THEN side4 WHEN 5 THEN side5 WHEN 6 THEN side6 end) AS side_name FROM ProfileTransition INNER JOIN Profile ON Profile.id = ProfileTransition.profile_id WHERE ProfileTransition.id=%s ORDER BY ProfileTransition.time DESC LIMIT 1) AS sidename FROM Transition WHERE cube_id=(SELECT id FROM Cube WHERE unique_id=%s) AND time BETWEEN (SELECT time FROM ProfileTransition WHERE id=%s AND ProfileTransition.cube_id=Transition.cube_id) AND (SELECT time FROM ProfileTransition WHERE id=%s AND ProfileTransition.cube_id=Transition.cube_id UNION (SELECT NOW() FROM DUAL) ORDER BY time ASC LIMIT 1);", str(profile_transition_id), str(cube_code), str(profile_transition_id), str(int(profile_transition_id)+1))
+
+        transition_list = []
+        for transition_info in transitions:
+            transition_list.append( Transition(transition_info) )	
+        return json.dumps(transition_list, cls=TransitionEncoder)
+
+
+#Deals with changing the profile of a cube
+class ProfileHandler(BaseHandler):
+	@tornado.web.authenticated
+	def post(self, cube_code):
+                profile_id = self.get_argument("profile_id")
+		
+		profile_name = self.save_profile(cube_code, profile_id)
+		
+		self.write(profile_name)
+
+	def save_profile(self, cube_code, profile_id):
+
+		self.db.execute("INSERT INTO ProfileTransition (cube_id, profile_id, time) VALUES ((SELECT id FROM Cube WHERE unique_id=%s), %s, NOW());", cube_code, profile_id)
+
+		profile = self.db.get("SELECT * FROM Profile WHERE id = %s", profile_id)
+		return profile['name']
+
+class PublicHandler(BaseHandler):
+	@tornado.web.authenticated
+	def post(self, cube_code):
+                value = self.get_argument("value")
+		self.save_public(cube_id, value)
+		if value == '1':
+			response='Yes'
+		else:
+			response='No'
+		
+		self.write(response)
+
+	def save_public(self, cube_id, value):
+		self.db.execute("UPDATE Cube SET public=%s WHERE unique_id=%s", value, cube_code)
+
+class EventHandler(BaseHandler):
+        def get(self, cube_code):
+            import json
+            import hmac
+            import hashlib
+            events = self.db.query("SELECT action, rotation, cube_id, (SELECT secret_key FROM Cube WHERE unique_id=%s) AS secret_code FROM Event WHERE owner = (SELECT owner FROM Cube WHERE unique_id=%s) AND action='flashLED' AND rotation = (SELECT position FROM Transition WHERE Transition.cube_id=Event.cube_id ORDER BY time DESC LIMIT 1);", cube_code, cube_code)
+
+            event_list = []
+            for event in events:
+
+                hmac_obj = hmac.new(str(event['secret_code']), str(event['action'])+str(event['rotation']), hashlib.sha224)
+                digest = hmac_obj.hexdigest()
+                del event['secret_code']
+                del event['cube_id']
+                event['digest'] = digest
+                event_list.append(event)
+
+            self.write(json.dumps(event_list))
+
+        @tornado.web.authenticated
+        def post(self, cube_code):
+                side = self.get_argument("side")
+                action = self.get_argument("action")
+                profile_id = self.get_argument("profile_id")
+                current_user = self.get_current_user()
+
+                #First, check the users are friends
+                friend = self.db.query("SELECT * FROM Friend WHERE (user1=%s AND user2=(SELECT owner FROM Cube WHERE unique_id=%s)) OR (user1 IN (SELECT owner FROM Cube WHERE unique_id=%s) AND user2=%s);", current_user.user_id, cube_code, current_user.user_id, cube_code);
+                if friend is None:
+                    #Not friends!
+                    return
+                
+                self.db.execute("INSERT INTO Event (cube_id, owner, action, rotation, profile_id) VALUES (%s, %s, %s, %s, %s);", cube_id, current_user.user_id, action, side, profile_id);

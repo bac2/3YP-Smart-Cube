@@ -23,8 +23,6 @@ class FriendsHandler(BaseHandler):
 			users.append(current)
 		return users
 
-
-class AddFriendHandler(BaseHandler):
 	@tornado.web.authenticated
 	def post(self):
             current_user = self.get_current_user()

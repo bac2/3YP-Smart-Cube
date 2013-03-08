@@ -50,7 +50,7 @@
 				{% if cube.corresponding_profile is None %}
 				<li>awaiting a cube update (Smart-Cube {{cube.code}})</li>
 				{% else %}
-				<div class="cube" cube_id="{{cube.cube_id}}">{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}} (Smart-Cube {{cube.code}}) <a class='btn add-event push-right' data-toggle="modal" href="#event_create{{cube.cube_id}}">Add event</a>
+				<div class="cube" cube_code="{{cube.code}}">{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}} (Smart-Cube {{cube.code}}) <a class='btn add-event push-right' data-toggle="modal" href="#event_create{{cube.cube_id}}">Add event</a>
 					<div class="pull-right" style="font-size: 10pt;">
 						Last Updated: {{str(cube.last_transition.hour) + ":" + str(cube.last_transition.minute)}}
 					</div>
