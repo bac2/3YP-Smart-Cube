@@ -63,7 +63,7 @@ if(args.action == 'start'):
 	logging.basicConfig(filename="/home/pi/3YP/cube/cube.log")
 	logging.info("Started cube running")
 		
-	cube = Cube("420320")
+	cube = Cube()
 	p = Process(target=check_loop, args=(l,))
 	p.start()
 	p2 = Process(target=event_checker, args=(l,))
