@@ -6,7 +6,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 unset number
-for(( i=1; i<=6; i++)) do
+for(( i=1; i<=3; i++)) do
 
 	number=$number$(( $RANDOM/3276 ))
 done
@@ -22,6 +22,12 @@ echo 'Generated Secret Code - ' $code
 echo [cube] > temp
 echo code = $number >> temp
 echo secret = $code >> temp
+echo XPos = [59, 50, 26] >> temp
+echo XNeg = [64, 78, 0] >> temp
+echo YPos = [44, 60, 4] >> temp
+echo YNeg = [79, 69, 20] >> temp
+echo ZPos = [70, 51, 0] >> temp
+echo ZNeg = [53, 77, 24] >> temp
 cp temp cube/cube.conf
 rm temp
 echo 'Created config file in cube.conf...'

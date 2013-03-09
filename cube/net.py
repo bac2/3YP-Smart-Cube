@@ -7,7 +7,7 @@ from log import Log
 from cube import Rotation
 from requests.exceptions import ConnectionError
 
-POST_URL = 'http://bubuntu-vm.lan:8080'
+POST_URL = 'http://kanga-bac2g10.ecs.soton.ac.uk'
 
 class Network:
 
@@ -22,10 +22,8 @@ class Network:
 			hmac_obj = hmac.new(str(self.secret_code), str(rotation.rotation)+str(rotation.time), hashlib.sha224)
 			digest = hmac_obj.hexdigest()
 			post_data = {'rotation':rotation.rotation, 'time':rotation.time, 'digest':digest}
-			print "About to send",post_data
 			url = POST_URL + "/cube/" + self.cube_code + "/transitions"
 			response = requests.post(url, params=post_data)
-			print response.content
 
 			self.check_log()
 		except ConnectionError as e:
