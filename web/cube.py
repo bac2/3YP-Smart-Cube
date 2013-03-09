@@ -1,5 +1,5 @@
 from base_handler import BaseHandler
-from data_objects import User, Transition, ProfileTransition, Profile 
+from data_objects import User, Transition, ProfileTransition, Profile, Cube
 import tornado.web
 import json
 import datetime
@@ -19,6 +19,11 @@ class BaseTransitionEncoder(json.JSONEncoder):
             return { 'time':obj.time, 'position':obj.position }
         elif isinstance(obj, ProfileTransition):
             return { 'profile_id':obj.profile_id, 'time':obj.time, 'cube_id':obj.cube_id}
+
+class CubeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Cube):
+            return {'cube_id':obj.cube_id, 'code':obj.code, 'position':obj.rotation, 'last_transition':obj.last_transition, 'public':obj.public}
 
 class UpdateHandler(BaseHandler):
     
@@ -82,12 +87,21 @@ class RegisterHandler(BaseHandler):
 			self.params['unique_code'] = cube_code
 		self.render('register.html', **self.params)
 
+class CubeHandler(BaseHandler):
+
+        @tornado.web.authenticated
+        def get(self):
+            current_user = self.get_current_user()
+            cubes = self.get_cubes()
+
+            self.write(json.dumps(cubes, cls=CubeEncoder))
+
         @tornado.web.authenticated
 	def post(self):
 		import hashlib
 		current_user = self.get_current_user()
 		secret_code = hashlib.sha224(self.get_argument('unique_code')).hexdigest()
-		self.db.execute("INSERT INTO Cube (secret_key, Owner, unique_id) VALUES (%s, %s, %s);", secret_code, current_user.user_id, self.get_argument('unique_code')) 
+		self.db.execute("INSERT INTO Cube (secret_key, Owner, unique_id, public) VALUES (%s, %s, %s, 0);", secret_code, current_user.user_id, self.get_argument('unique_code')) 
 		self.params['complete'] = True
 		self.render('register.html', **self.params)
 
