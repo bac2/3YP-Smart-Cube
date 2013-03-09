@@ -16,6 +16,8 @@ from tornado.options import define, options
 import auth
 import settings
 import cube
+import profile
+import event
 import friends
 import stats
 from base_handler import BaseHandler
@@ -23,28 +25,28 @@ from base_handler import BaseHandler
 
 class App(tornado.web.Application):
 	def __init__(self):
-		handlers = [
-			(r"/", HomeHandler),
-			(r"/login", auth.GoogleHandler),
-			(r"/logout", auth.LogoutHandler),
-			(r"/friends", friends.FriendsHandler),
-			(r"/statistics", stats.StatsHandler),
-			(r"/statistics/([0-9]+)", stats.StatsDataHandler),
-			(r"/update/([0-9]{6})", cube.UpdateHandler),
-			(r"/register/([0-9]{6})", cube.RegisterHandler),
-			(r"/register", cube.RegisterHandler),
-			(r"/settings", settings.SettingsHandler),
-			(r"/settings/profile", settings.ProfileCreateHandler),
-			(r"/settings/profile/delete/([0-9]+)", settings.ProfileDeleteHandler),
-			(r"/settings/profile/edit/([0-9]+)", settings.ProfileEditHandler),
-			(r"/settings/cube/([0-9]+)/profile/([0-9]+)", settings.CubeProfileHandler),
-			(r"/settings/cube/([0-9]+)/public/([0-1])", settings.CubePublicHandler),
-                        (r"/settings/event/([0-9]+)", settings.EventCreateHandler),
-                        (r"/events/([0-9]{6})", settings.EventHandler),
-                        (r"/events/web", settings.EventWebHandler),
-                        (r"/events/web/([0-9]+)", settings.EventWebHandler),
-			(r"/about", AboutHandler)
-			]
+                handlers = [
+                        (r"/", HomeHandler),
+                        (r"/login", auth.GoogleHandler),
+                        (r"/logout", auth.LogoutHandler),
+                        (r"/friends", friends.FriendsHandler), #GET, POST
+                        (r"/statistics", stats.StatsHandler),
+                        (r"/cube/([0-9]+)/profile-transitions", cube.ProfileTransitionHandler), #GET
+                        (r"/cube/([0-9]+)/transitions/profile-transition/([0-9]+)", cube.TransitionsHandler), #GET
+                        (r"/cube/([0-9]+)/transitions", cube.UpdateHandler), #GET, POST
+                        (r"/cube/([0-9]+)/register", cube.RegisterHandler), #GET
+                        (r"/cube", cube.RegisterHandler), #POST
+                        (r"/settings", settings.SettingsHandler), #GET
+                        (r"/profile", profile.ProfileCreateHandler), #POST
+                        (r"/profile/([0-9]+)", profile.ProfileEditHandler), #DELETE, POST
+                        (r"/cube/([0-9]+)/profile", cube.ProfileHandler), #POST
+                        (r"/cube/([0-9]+)/public", cube.PublicHandler), #POST
+                        (r"/cube/([0-9]+)/events", cube.EventHandler), #GET, POST
+                        (r"/events", event.EventHandler), #GET
+                        (r"/events/([0-9]+)", event.EventEditHandler), #POST, DELETE
+                        (r"/about", AboutHandler)
+                ]
+
 		app_settings = dict(
 			app_title=u'Smart-Cube',
 			static_path=os.path.join(os.path.dirname(__file__), "static"),

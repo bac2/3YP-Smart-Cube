@@ -1,12 +1,12 @@
 {% extends "base.html" %}	    
 
 {% block js %}
-	<script src="{{ static_url("js/jquery.flot.js") }}"></script>
-	<script src="{{ static_url("js/jquery.flot.JUMlib.js") }}"></script>
-	<script src="{{ static_url("js/jquery.flot.time.js") }}"></script>
-	<script src="{{ static_url("js/jquery.flot.pie.js") }}"></script>
-	<script src="{{ static_url("js/jquery.flot.gantt.js") }}"></script>
-	<script src="{{ static_url("js/stats.js") }}"></script>
+<script src="{{ static_url("js/jquery.flot.js") }}"></script>
+<script src="{{ static_url("js/jquery.flot.JUMlib.js") }}"></script>
+<script src="{{ static_url("js/jquery.flot.time.js") }}"></script>
+<script src="{{ static_url("js/jquery.flot.pie.js") }}"></script>
+<script src="{{ static_url("js/jquery.flot.gantt.js") }}"></script>
+<script src="{{ static_url("js/stats.js") }}"></script>
 {% end %}
 
 {% block content %}
@@ -16,16 +16,32 @@
 		Here you can see your usage statistics
 	</div>
 	{% if len(cubes) == 0 %}
-	    <span>You have no data from your Smart-Cubes!</span>
+	<span>You have no data from your Smart-Cubes!</span>
 	{% end %}
 	{% for cube in cubes %}
-	    <div class="cube" cube_id="{{cube.cube_id}}">
+	<div class="cube" cube_code="{{cube.code}}">
 		<h3>Smart-Cube {{ cube.code }}</h3>
-		<h4>Time spent in each state of profile {{cube.profile.name}}</h4>
-		<div class="pie-placeholder" style="width: 600px; height: 400px;">
+		<h4>Profile
+			<div class="btn-group">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					{% for transition in cube.profile_transitions %}
+					<li><a tabindex="-1" profile_transition_id="{{transition.profile_transition_id}}" href="#">{{transition.profile_name}} - {{transition.time}}</a></li>
+					{% end %}
+				</ul>
+			</h4>
+			<h4 class="error">
+				There is no data for the current profile.<br/>If you have just changed profile then your Smart-Cube make not have sent any new data to us.	
+			</h4>
+
+			<div class="profile_transition"> 
+				<div class="pie-placeholder" style="width: 600px; height: 400px;">
+				</div>
+				<div class="gantt-placeholder" style="width: 600px; height: 400px;">
+				</div>
+			</div>
 		</div>
-		<div class="gantt-placeholder" style="width: 600px; height: 400px;">
-		</div>
-	    </div>
-	{% end %}
-{% end %}
+		{% end %}
+		{% end %}

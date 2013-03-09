@@ -1,9 +1,9 @@
 function updateProfile() {
 	var cube = $(this).parents(".cube");
-	var cube_id = cube.attr("cube_id");
+	var cube_code = cube.attr("cube_code");
 	var profile_id = $(this).attr("profile_id");
 	var dropdown_text = cube.find(".pname")
-	$.post("/settings/cube/"+cube_id+"/profile/"+profile_id, function(data) {
+	$.post("/cube/"+cube_code+"/profile?profile_id="+profile_id, function(data) {
 		dropdown_text.html(data);
 	});
 	dropdown_text.html("...");
@@ -11,10 +11,10 @@ function updateProfile() {
 
 function setPublic() {
 	var cube = $(this).parents(".cube");
-	var cube_id = cube.attr("cube_id");
+	var cube_id = cube.attr("cube_code");
 	var value = ($(this).html() == "Yes") ? 1 : 0;
 	var dropdown_text = cube.find(".public_state");
-	$.post("/settings/cube/"+cube_id+"/public/"+value, function(data) {
+	$.post("/cube/"+cube_code+"/public?value="+value, function(data) {
 		dropdown_text.html(data);
 	});
 	dropdown_text.html("...");
@@ -24,7 +24,7 @@ function delete_profile() {
 	profile = $(this).parent()
 	profile_id = profile.attr("profile_id");
 
-	$.post("/settings/profile/delete/"+profile_id, function(data) {
+	$.delete("/profile/"+profile_id, function(data) {
 		if(data == "success") {
 			$("#profile"+profile_id).remove();
 		} else if (data == "profile in use") {
@@ -46,7 +46,7 @@ function post_edit() {
 	var s5 = profile.children("#side5").children().first().val();
 	var s6 = profile.children("#side6").children().first().val();
 
-	var url = '/settings/profile/edit/'+profile_id+'?name='+name+'&desc='+desc+'&s1='+s1+'&s2='+s2+'&s3='+s3+'&s4='+s4+'&s5='+s5+'&s6='+s6;
+	var url = '/profile/'+profile_id+'?name='+name+'&desc='+desc+'&s1='+s1+'&s2='+s2+'&s3='+s3+'&s4='+s4+'&s5='+s5+'&s6='+s6;
 	$.post(url, function(data) {
 		if(data == 'success') {
 			return;
@@ -71,11 +71,20 @@ function edit_profile() {
 	profile.children('#edit').hide();
 	profile.children('#confirm').show();
 
-	profile.wrap('<form id="profile_form'+profile_id+'" action="/settings/profile/edit/'+profile_id+'" method="post" />');
+	profile.wrap('<form id="profile_form'+profile_id+'" action="/profile/'+profile_id+'" method="post" />');
 	profile.find("span").each( function(i, child) {
 		$(child.firstChild).replaceWith('<input type="text" value="'+$(child).html()+'">');
 	});
 
+}
+
+function delete_event() {
+	var event_id= $(this).parent().attr("event_id");
+	var event_item = $(this).parent();
+
+	$.delete_("/events/"+event_id, function(data) {
+		event_item.hide();
+	});
 }
 
 $(document).ready(function() {
@@ -94,6 +103,10 @@ $(document).ready(function() {
 		$(profile).children('#confirm').hide();
 
 		$(profile).children("#delete").click(delete_profile);
+	});
+
+	$.each( $('.event'), function(i, event_item) {
+		$(event_item).children("#delete").click(delete_event);
 	});
 	$('.collapse').on( {
 		shown: function() {
