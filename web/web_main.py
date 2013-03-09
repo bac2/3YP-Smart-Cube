@@ -39,7 +39,7 @@ class App(tornado.web.Application):
                         (r"/settings", settings.SettingsHandler), #GET
                         (r"/profile", profile.ProfileCreateHandler), #POST
                         (r"/profile/([0-9]+)", profile.ProfileEditHandler), #DELETE, POST
-                        (r"/cube/([0-9]+)/profile", cube.ProfileHandler), #POST
+                        (r"/cube/([0-9]+)/profile", cube.ProfileHandler), #POST, GET
                         (r"/cube/([0-9]+)/public", cube.PublicHandler), #POST
                         (r"/cube/([0-9]+)/events", cube.EventHandler), #GET, POST
                         (r"/events", event.EventHandler), #GET

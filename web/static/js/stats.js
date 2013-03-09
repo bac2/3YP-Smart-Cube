@@ -20,11 +20,11 @@ $(document).ready(function() {
 });
 
 function generateNewGraph() {
-	cube = $(this).parents(".cube");
-	cube_code = cube.attr("cube_code");
-	profile_transition_id = $(this).attr("profile_transition_id");
+	var cube = $(this).parents(".cube");
+	var cube_code = cube.attr("cube_code");
+	var profile_transition_id = $(this).attr("profile_transition_id");
 	//Grab the div
-	graph_div = $(cube).children(".profile_transition");
+	var graph_div = $(cube).children(".profile_transition");
 	//Set the attribute
 	graph_div.attr("profile_transition_id", profile_transition_id);
 	//Get the data
@@ -36,14 +36,14 @@ function generateNewGraph() {
 		if( cubes_data.length > 0 ) {
 			generatePie(graph_div, cubes_data);
 			generateGantt(graph_div, cubes_data);
-			graph_div.show();
+			$(graph_div).show();
 			$(cube).children(".error").hide();
-			graph_div.find(".pieLabelBackground").each(function(i, background) {
+			$(graph_div).find(".pieLabelBackground").each(function(i, background) {
 				$(background).css("height", "64px").css("width", "84px");
 			});
 		} else {	
 			$(cube).children(".error").show();
-			graph_div.hide();
+			$(graph_div).hide();
 		}
 	});
 	var name = $(this).html();
@@ -51,7 +51,7 @@ function generateNewGraph() {
 }
 
 function formatterFunction(label, series) {
-	time = series.data[0][1];
+	var time = series.data[0][1];
 	var days = Math.floor(time / (3600*24));
 	time %= 3600*24;
 
@@ -73,27 +73,27 @@ function generatePie(parent_div, cubes_data) {
 	cubes_data.sort(time_sort);	
 
 	var graph_labels = {};
-	var colors = ['#4572A7', '#80699B', '#AA4643', '#3D96AE', '#89A54E', '#23D53C', '#53D21A']
+	var colors = ['#4572A7', '#80699B', '#AA4643', '#3D96AE', '#89A54E', '#23D53C', '#53D21A'];
 
-		$(cubes_data).each( function (i, transition) {
+	$(cubes_data).each( function (i, transition) {
 
-			if (transition.side_name == null) {
-				transition.side_name= "Unknown";
-			}
-			var to_date = new Date();
-			if( i != cubes_data.length-1 ) {
-				to_date = new Date(cubes_data[i+1].time);
-			}
-			var time_delta = to_date - new Date(transition.time);
-			transition.time_delta = time_delta / 1000; //MILLI TO SECS
+		if (transition.side_name == null) {
+			transition.side_name= "Unknown";
+		}
+		var to_date = new Date();
+		if( i != cubes_data.length-1 ) {
+			to_date = new Date(cubes_data[i+1].time);
+		}
+		var time_delta = to_date - new Date(transition.time);
+		transition.time_delta = time_delta / 1000; //MILLI TO SECS
 
-			if(graph_labels.hasOwnProperty(transition.side_name)) {
-				label = graph_labels[transition.side_name];
-				label.data = label.data + time_delta/1000;
-			} else {
-				graph_labels[transition.side_name] = { label: transition.side_name, data: time_delta/1000, color: colors[transition.position]};
-			}
-		});
+		if(graph_labels.hasOwnProperty(transition.side_name)) {
+			label = graph_labels[transition.side_name];
+			label.data = label.data + time_delta/1000;
+		} else {
+			graph_labels[transition.side_name] = { label: transition.side_name, data: time_delta/1000, color: colors[transition.position]};
+		}
+	});
 	var graph_data = [];
 	for (var key in graph_labels) {	
 		graph_data.push(graph_labels[key]);
@@ -103,20 +103,20 @@ function generatePie(parent_div, cubes_data) {
 		series: {
 			pie: {
 				show: true,
-				combine: {
-					color: '#999',
-					threshold: 0.03
-	
-				},
-				label: {
-					show: true,
-					radius: 4/5,
-					formatter: formatterFunction,
-					background: {
-						opacity: 0.8,
-						color: '#444'
-					}
-				}
+		combine: {
+			color: '#999',
+		threshold: 0.03
+
+		},
+		label: {
+			show: true,
+		radius: 4/5,
+		formatter: formatterFunction,
+		background: {
+			opacity: 0.8,
+		color: '#444'
+		}
+		}
 			},
 		},
 		grid: {
@@ -131,10 +131,10 @@ function generatePie(parent_div, cubes_data) {
 
 function generateGantt(parent_div, cubes_data) {
 
-	data_array = []	
-		names = {}
+	var data_array = []	
+	var names = {}
 	$(cubes_data).each( function (i, transition) {
-		data_item = []
+		var data_item = []
 
 		if (transition.side_name == null) {
 			transition.side_name= "Unknown";
@@ -144,16 +144,16 @@ function generateGantt(parent_div, cubes_data) {
 	if( i != cubes_data.length-1 ) {
 		to_date = new Date(cubes_data[i+1].time);
 	}
-	data_item = [ new Date(transition.time), transition.position, to_date, "Transition" ];
+	var data_item = [ new Date(transition.time), transition.position, to_date, "Transition" ];
 	data_array.push(data_item);
 
 	});
 
-	ticks = []
+	var ticks = []
 		for( var key in names ) {
 			ticks.push( [key, names[key]] );
 		}
-	graph_data = [ { label:"states", data:data_array } ];
+	var graph_data = [ { label:"states", data:data_array } ];
 
 	$(parent_div).children(".gantt-placeholder").plot(graph_data, {
 		series: {

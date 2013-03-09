@@ -36,14 +36,21 @@ class Transition():
 		self.time = transition_info['time']
 		self.position = transition_info['position']
 		self.cube_id = transition_info['cube_id']
-		self.side_name = transition_info['sidename']
+                try:
+	    	    self.side_name = transition_info['sidename']
+                except KeyError:
+                    pass
 
 class ProfileTransition():
     def __init__(self, transition_info):
             self.time = transition_info['time']
             self.cube_id = transition_info['cube_id']
             self.profile_transition_id = transition_info['id']
-            self.profile_name = transition_info['name']
+            self.profile_id = transition_info['profile_id']
+            try:
+                self.profile_name = transition_info['name']
+            except KeyError:
+                pass
 
 
 class Event():
