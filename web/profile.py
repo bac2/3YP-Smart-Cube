@@ -6,7 +6,7 @@ import json
 class ProfileEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Profile):
-            return {'describe_line':obj.describe_line, 'creator_id':obj.creator_id, 'name':obj.name, 'sides':obj.sides}
+            return {'profile_id':obj.profile_id, 'describe_line':obj.describe_line, 'creator_id':obj.creator_id, 'name':obj.name, 'sides':obj.sides}
 
 #Deals with creating a profile and viewing profiles
 class ProfileCreateHandler(BaseHandler):
