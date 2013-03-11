@@ -48,7 +48,7 @@
 				{{friend.name}} is
 				{% for cube in friend.cubes %}
 				{% if cube.corresponding_profile is None %}
-				<li>awaiting a cube update (Smart-Cube {{cube.code}})</li>
+				awaiting a cube update (Smart-Cube {{cube.code}})<br/>
 				{% else %}
 				<div class="cube" cube_code="{{cube.code}}">{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}} (Smart-Cube {{cube.code}}) <a class='btn add-event push-right' data-toggle="modal" href="#event_create{{cube.cube_id}}">Add event</a>
 					<div class="pull-right" style="font-size: 10pt;">
@@ -89,7 +89,6 @@
 							<button href="#" type="submit" data-dismiss="modal" class="btn btn-primary">Save changes</a>
 						</div>
 					</div><!-- END MODAL -->	
-				</div>
 			</div>	
 			{% end %}
 			{% end %}
