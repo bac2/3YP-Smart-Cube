@@ -11,12 +11,34 @@ class TransitionEncoder(json.JSONEncoder):
         elif isinstance(obj, Transition):
             return { 'time':obj.time, 'position':obj.position, 'side_name':obj.side_name}
 
+class BaseTransitionEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        elif isinstance(obj, Transition):
+            return { 'time':obj.time, 'position':obj.position }
+        elif isinstance(obj, ProfileTransition):
+            return { 'profile_id':obj.profile_id, 'time':obj.time, 'cube_id':obj.cube_id}
+
 class UpdateHandler(BaseHandler):
     
         #Lists transitions for a given cube
         @tornado.web.authenticated
         def get(self, cube_code):
-	    self.write("Not yet implemented!")
+            transitions = self.fetch_transitions(cube_code)
+            self.write(json.dumps(transitions, cls=BaseTransitionEncoder))
+
+        def fetch_transitions(self, cube_code):
+            transitions_info = self.db.query("SELECT * FROM Transition WHERE cube_id=(SELECT id FROM Cube WHERE unique_id=%s)", cube_code)
+
+            transitions = []
+            for transition_info in transitions_info:
+                transition = Transition(transition_info)
+                transitions.append(transition)
+            
+            return transitions
+            
+            
 
 	#Receives an update from a cube
 	def post(self, cube_code):
@@ -69,10 +91,19 @@ class RegisterHandler(BaseHandler):
 		self.params['complete'] = True
 		self.render('register.html', **self.params)
 
+
+
 class ProfileTransitionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, cube_code):
-        self.write("Profile transitions - TODO")
+        profile_transitions_info = self.db.query("SELECT * FROM ProfileTransition WHERE cube_id=(SELECT id FROM Cube WHERE unique_id=%s);", cube_code)
+
+        profile_transitions = []
+        for profile_transition_info in profile_transitions_info:
+            current = ProfileTransition(profile_transition_info)
+            profile_transitions.append(current)
+
+        self.write(json.dumps(profile_transitions, cls=BaseTransitionEncoder))
 
 class TransitionsHandler(BaseHandler):
 
@@ -89,7 +120,7 @@ class TransitionsHandler(BaseHandler):
         return json.dumps(transition_list, cls=TransitionEncoder)
 
 
-#Deals with changing the profile of a cube
+#Deals with changing and getting the profile of a cube
 class ProfileHandler(BaseHandler):
 	@tornado.web.authenticated
 	def post(self, cube_code):

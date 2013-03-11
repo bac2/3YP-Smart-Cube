@@ -1,6 +1,12 @@
 #!/bin/bash
+
+if [[ $EUID -ne 0 ]]; then
+	echo "This must be run by root! Did you use sudo?"
+	exit 1
+fi
+
 unset number
-for(( i=1; i<=6; i++)) do
+for(( i=1; i<=3; i++)) do
 
 	number=$number$(( $RANDOM/3276 ))
 done
@@ -13,13 +19,18 @@ code=`python temp`
 rm temp
 
 echo 'Generated Secret Code - ' $code 
-sed 's/Cube(\"[0-9]*\")/Cube\("'$number'"\)/' < cube/run.py >temp
-#cp temp cube/run.py
+echo [cube] > temp
+echo code = $number >> temp
+echo secret = $code >> temp
+echo XPos = [59, 50, 26] >> temp
+echo XNeg = [64, 78, 0] >> temp
+echo YPos = [44, 60, 4] >> temp
+echo YNeg = [79, 69, 20] >> temp
+echo ZPos = [70, 51, 0] >> temp
+echo ZNeg = [53, 77, 24] >> temp
+cp temp cube/cube.conf
 rm temp
-
-sed "s/SECRET_CODE = '.*'$/SECRET_CODE = '"$code"'/" <cube/cube.py >temp
-#cp temp cube/cube.py
-rm temp
+echo 'Created config file in cube.conf...'
 
 echo 'Installing i2c-tools...'
 apt-get -y install i2c-tools >/dev/null
@@ -48,7 +59,7 @@ mv supervisord /etc/init.d/supervisord
 update-rc.d supervisord defaults >/dev/null
 
 echo_supervisord_conf > /etc/supervisord.conf
-/etc/init.d/supervisord start >/dev/null
+/etc/init.d/supervisord start 2>/dev/null 1>/dev/null
 
 echo [include] >> /etc/supervisord.conf
 echo files=/etc/supervisord/*.conf >> /etc/supervisord.conf
@@ -61,11 +72,11 @@ echo command=/home/pi/3YP/wifi.py >> /etc/supervisord/cube.conf
 
 echo Installing noip client...
 cd /usr/local/src
-wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz
-tar -xzf noip-duc-linux.tar.gz
-cd no-ip-2.1.9-1
-make
-make install
+wget https://www.noip.com/client/linux/noip-duc-linux.tar.gz 1>/dev/null 2>/dev/null
+tar -xzf noip-duc-linux.tar.gz >/dev/null
+cd noip-2.1.9-1
+make 2>/dev/null
+make install 
 
 sed 's/^exit 0/\/usr\/local\/bin\/noip2\
 \

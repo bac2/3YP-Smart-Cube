@@ -7,7 +7,7 @@ from log import Log
 from cube import Rotation
 from requests.exceptions import ConnectionError
 
-POST_URL = 'http://bubuntu-vm.lan:8080'
+POST_URL = 'http://kanga-bac2g10.ecs.soton.ac.uk'
 
 class Network:
 

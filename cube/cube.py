@@ -1,5 +1,6 @@
 from mma7455 import Accel 
-SECRET_CODE = 'a2257ab8dd11cb8797b412b12fc58a9caaf6e1181772cf68aeaba3ee'
+import ConfigParser
+import json
 
 class Rotation:
 	def __init__(self, rotation, time):
@@ -15,18 +16,21 @@ class Cube:
 	ZUP = 5;
 	ZDOWN = 6;
 
-	def __init__(self, unique_code):
-		self.code = unique_code
-		self.secret_code = SECRET_CODE
+	def __init__(self):
+                config = ConfigParser.RawConfigParser()
+                config.read('cube.conf')
+
+		self.code = config.get("cube", "code")
+		self.secret_code = config.get("cube", "secret")
 		self.accel = Accel()
 		self.currentRotation = 0;
 		#Some preconfigured values...
-		self.XPos = [67, 65, 33]
-		self.XNeg = [67, 65, 77]
-		self.YPos = [64, 44, 15]
-		self.YNeg = [64, 3, 15]
-		self.ZPos = [45, 65, 13]
-		self.ZNeg = [5, 65, 13]
+		self.XPos = json.loads(config.get("cube", "XPos"))
+		self.XNeg = json.loads(config.get("cube", "XNeg"))
+		self.YPos = json.loads(config.get("cube", "YPos"))
+		self.YNeg = json.loads(config.get("cube", "YNeg"))
+		self.ZPos = json.loads(config.get("cube", "ZPos"))
+		self.ZNeg = json.loads(config.get("cube", "ZNeg"))
 
 	def get_rotation(self):
 		return self.currentRotation
@@ -101,3 +105,10 @@ class Cube:
 		if( self.currentRotation == Cube.ZDOWN ):
 			return "Z DOWN"
 		return "UNKNOWN"
+
+if __name__=='__main__':
+	cube = Cube("123")
+	cube.calibX()
+	cube.calibY()
+	cube.calibZ()
+	print cube.XPos, cube.XNeg, cube.YPos, cube.YNeg, cube.ZPos, cube.ZNeg

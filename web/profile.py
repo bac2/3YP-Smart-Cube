@@ -1,9 +1,27 @@
 from base_handler import BaseHandler
-from data_objects import User
+from data_objects import User, Profile
 import tornado.web
+import json
 
-#Deals with creating a profile
+class ProfileEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Profile):
+            return {'profile_id':obj.profile_id, 'describe_line':obj.describe_line, 'creator_id':obj.creator_id, 'name':obj.name, 'sides':obj.sides}
+
+#Deals with creating a profile and viewing profiles
 class ProfileCreateHandler(BaseHandler):
+        @tornado.web.authenticated
+        def get(self):
+            current_user = self.get_current_user()
+            profiles_info = self.db.query("SELECT * FROM Profile WHERE creator_id=%s;", current_user.user_id)
+
+            profiles = []
+            for profile_info in profiles_info:
+                current = Profile(profile_info)
+                profiles.append(current)
+
+            self.write(json.dumps(profiles, cls=ProfileEncoder))
+
 	@tornado.web.authenticated
 	def post(self):
 		name = self.get_argument("name")
