@@ -42,7 +42,7 @@ def getRot():
 	cube.check_rotation()
 	current_rot = cube.get_rotation()
 	l.release()
-	pos = {1:'UP',2:'DOWN',3:'LEFT',4:'RIGHT',5:'FRONT',6:'BACK'}
+	pos = {0:'UNKNOWN',1:'UP',2:'DOWN',3:'LEFT',4:'RIGHT',5:'FRONT',6:'BACK'}
 	return template('Hello! Current upwards is {{rot}}', rot=pos[current_rot])
 
 def event_checker(l):
