@@ -1,5 +1,5 @@
 from mma7455 import Accel 
-SECRET_CODE = '3752a773c54338aec944a68453d70a0df1d04fdc323b5b2bceabec5d'
+import ConfigParser
 
 class Rotation:
 	def __init__(self, rotation, time):
@@ -15,9 +15,12 @@ class Cube:
 	ZUP = 5;
 	ZDOWN = 6;
 
-	def __init__(self, unique_code):
-		self.code = unique_code
-		self.secret_code = SECRET_CODE
+	def __init__(self):
+                config = ConfigParser.RawConfigParser()
+                config.read('cube.conf')
+
+		self.code = config.get("cube", "code")
+		self.secret_code = config.get("cube", "secret")
 		self.accel = Accel()
 		self.currentRotation = 0;
 		#Some preconfigured values...

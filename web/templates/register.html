@@ -8,7 +8,7 @@
 	    {% else %}
 	        {% if not registered %}
 	        Would you like to register Smart-Cube {{unique_code}} to your account?
-		<form action="/register" method="post">
+		<form action="/cube" method="post">
 		    <input type="hidden" name="unique_code" value="{{ unique_code }}">
 		    <input type="submit" value="Register" class="btn">
 		</form>
