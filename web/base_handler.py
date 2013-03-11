@@ -23,8 +23,11 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
 		user_id = self.get_secure_cookie('user')
 		if not user_id:
-			return None
+                    return None
 		user_info = self.db.get('SELECT * FROM User WHERE id=%s', user_id)
+                if user_info is None:
+                    #Cookie exists but user doesn't (Database deletion :()
+                    return None
 		return User(user_info)
 
 	#Returns all the cubes for the current user
