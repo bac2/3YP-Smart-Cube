@@ -18,7 +18,7 @@ class Cube:
 
 	def __init__(self):
                 config = ConfigParser.RawConfigParser()
-                config.read('cube.conf')
+                config.read('/home/pi/3YP/cube/cube.conf')
 
 		self.code = config.get("cube", "code")
 		self.secret_code = config.get("cube", "secret")
