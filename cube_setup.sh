@@ -6,7 +6,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 unset number
-for(( i=1; i<=6; i++)) do
+for(( i=1; i<=3; i++)) do
 
 	number=$number$(( $RANDOM/3276 ))
 done

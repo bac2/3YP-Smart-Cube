@@ -1,5 +1,6 @@
 from mma7455 import Accel 
 import ConfigParser
+import json
 
 class Rotation:
 	def __init__(self, rotation, time):
@@ -24,12 +25,12 @@ class Cube:
 		self.accel = Accel()
 		self.currentRotation = 0;
 		#Some preconfigured values...
-		self.XPos = config.get("cube", "XPos")
-		self.XNeg = config.get("cube", "XNeg")
-		self.YPos = config.get("cube", "YPos")
-		self.YNeg = config.get("cube", "YNeg")
-		self.ZPos = config.get("cube", "ZPos")
-		self.ZNeg = config.get("cube", "ZNeg")
+		self.XPos = json.loads(config.get("cube", "XPos"))
+		self.XNeg = json.loads(config.get("cube", "XNeg"))
+		self.YPos = json.loads(config.get("cube", "YPos"))
+		self.YNeg = json.loads(config.get("cube", "YNeg"))
+		self.ZPos = json.loads(config.get("cube", "ZPos"))
+		self.ZNeg = json.loads(config.get("cube", "ZNeg"))
 
 	def get_rotation(self):
 		return self.currentRotation
