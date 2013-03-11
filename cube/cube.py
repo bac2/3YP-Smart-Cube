@@ -24,12 +24,12 @@ class Cube:
 		self.accel = Accel()
 		self.currentRotation = 0;
 		#Some preconfigured values...
-		self.XPos = [59, 50, 26] 
-		self.XNeg = [64, 78, 0]
-		self.YPos = [44, 60, 4]
-		self.YNeg = [79, 69, 20]
-		self.ZPos = [70, 51, 0]
-		self.ZNeg = [53, 77, 24]
+		self.XPos = config.get("cube", "XPos")
+		self.XNeg = config.get("cube", "XNeg")
+		self.YPos = config.get("cube", "YPos")
+		self.YNeg = config.get("cube", "YNeg")
+		self.ZPos = config.get("cube", "ZPos")
+		self.ZNeg = config.get("cube", "ZNeg")
 
 	def get_rotation(self):
 		return self.currentRotation
