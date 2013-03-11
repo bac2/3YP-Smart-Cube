@@ -1,5 +1,5 @@
 from mma7455 import Accel 
-SECRET_CODE = 'a2257ab8dd11cb8797b412b12fc58a9caaf6e1181772cf68aeaba3ee'
+SECRET_CODE = '3752a773c54338aec944a68453d70a0df1d04fdc323b5b2bceabec5d'
 
 class Rotation:
 	def __init__(self, rotation, time):
@@ -21,12 +21,12 @@ class Cube:
 		self.accel = Accel()
 		self.currentRotation = 0;
 		#Some preconfigured values...
-		self.XPos = [67, 65, 33]
-		self.XNeg = [67, 65, 77]
-		self.YPos = [64, 44, 15]
-		self.YNeg = [64, 3, 15]
-		self.ZPos = [45, 65, 13]
-		self.ZNeg = [5, 65, 13]
+		self.XPos = [59, 50, 26] 
+		self.XNeg = [64, 78, 0]
+		self.YPos = [44, 60, 4]
+		self.YNeg = [79, 69, 20]
+		self.ZPos = [70, 51, 0]
+		self.ZNeg = [53, 77, 24]
 
 	def get_rotation(self):
 		return self.currentRotation
@@ -101,3 +101,10 @@ class Cube:
 		if( self.currentRotation == Cube.ZDOWN ):
 			return "Z DOWN"
 		return "UNKNOWN"
+
+if __name__=='__main__':
+	cube = Cube("123")
+	cube.calibX()
+	cube.calibY()
+	cube.calibZ()
+	print cube.XPos, cube.XNeg, cube.YPos, cube.YNeg, cube.ZPos, cube.ZNeg
