@@ -7,7 +7,7 @@ from log import Log
 from cube import Rotation
 from requests.exceptions import ConnectionError
 
-POST_URL = 'http://kanga-bac2g10.ecs.soton.ac.uk'
+POST_URL = 'http://bubuntu-vm.lan:8080'
 
 class Network:
 
@@ -47,7 +47,7 @@ class Network:
 		import json
 		import hmac
 		import hashlib
-		url = POST_URL + "/events/"+self.cube_code
+		url = POST_URL + "/cube/"+self.cube_code+"/events"
 		try:
 			response = requests.get(url)
 		except:
