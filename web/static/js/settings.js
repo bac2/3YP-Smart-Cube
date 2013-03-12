@@ -97,7 +97,7 @@ function create_profile() {
 	var s4 = body.find("#p_s4").val();
 	var s5 = body.find("#p_s5").val();
 	var s6 = body.find("#p_s6").val();
-=
+
 	$.post("/profile?name="+name+"&desc="+desc+"&s1="+s1+"&s2="+s2+"&s3="+s3+"&s4="+s4+"&s5="+s5+"&s6="+s6, function(data) {
 		if(data == "success") {
 			return;
