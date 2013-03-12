@@ -87,6 +87,26 @@ function delete_event() {
 	});
 }
 
+function create_profile() {
+	var body = $(this).parent().siblings().last();
+	var name = body.find("#p_name").val();
+	var desc = body.find("#p_desc").val();
+	var s1 = body.find("#p_s1").val();
+	var s2 = body.find("#p_s2").val();
+	var s3 = body.find("#p_s3").val();
+	var s4 = body.find("#p_s4").val();
+	var s5 = body.find("#p_s5").val();
+	var s6 = body.find("#p_s6").val();
+=
+	$.post("/profile?name="+name+"&desc="+desc+"&s1="+s1+"&s2="+s2+"&s3="+s3+"&s4="+s4+"&s5="+s5+"&s6="+s6, function(data) {
+		if(data == "success") {
+			return;
+		}
+		return;
+	});
+}
+
+
 $(document).ready(function() {
 	$.each( $('.cube'), function( i, cube ) {
 		
@@ -104,6 +124,8 @@ $(document).ready(function() {
 
 		$(profile).children("#delete").click(delete_profile);
 	});
+
+	$("#profile_create").find(".btn-primary").click( create_profile );
 
 	$.each( $('.event'), function(i, event_item) {
 		$(event_item).children("#delete").click(delete_event);
