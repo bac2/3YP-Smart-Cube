@@ -107,7 +107,7 @@ class Cube:
 		return "UNKNOWN"
 
 if __name__=='__main__':
-	cube = Cube("123")
+	cube = Cube()
 	cube.calibX()
 	cube.calibY()
 	cube.calibZ()
