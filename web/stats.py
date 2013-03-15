@@ -13,7 +13,7 @@ class StatsHandler(BaseHandler):
             self.render("stats.html", **self.params)
 
     def get_profile_transitions(self, cube):
-        ptrans = self.db.query("SELECT ProfileTransition.time AS time, cube_id, ProfileTransition.id AS id, Profile.name as name FROM ProfileTransition INNER JOIN Profile ON Profile.id = ProfileTransition.profile_id WHERE cube_id=%s ORDER BY ProfileTransition.time DESC;", cube.cube_id)
+        ptrans = self.db.query("SELECT ProfileTransition.time AS time, cube_id, ProfileTransition.id AS id, Profile.name as name, Profile.id as profile_id FROM ProfileTransition INNER JOIN Profile ON Profile.id = ProfileTransition.profile_id WHERE cube_id=%s ORDER BY ProfileTransition.time DESC;", cube.cube_id)
 
         ptransitions = []
         for ptran in ptrans:

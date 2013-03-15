@@ -21,10 +21,11 @@
 	{% for cube in cubes %}
 	<div class="cube" cube_code="{{cube.code}}">
 		<h3>Smart-Cube {{ cube.code }}</h3>
-		<h4>Profile
+		<h4>
 			<div class="btn-group">
 				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-					<span class="caret"></span>
+					No profiles available
+					<!-- <span class="caret"></span> -->
 				</a>
 				<ul class="dropdown-menu">
 					{% for transition in cube.profile_transitions %}
