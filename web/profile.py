@@ -24,18 +24,18 @@ class ProfileCreateHandler(BaseHandler):
 
 	@tornado.web.authenticated
 	def post(self):
-		name = self.get_argument("name")
-		desc = self.get_argument("desc")
-		s1 = self.get_argument("s1")
-		s2 = self.get_argument("s2")
-		s3 = self.get_argument("s3")
-		s4 = self.get_argument("s4")
-		s5 = self.get_argument("s5")
-		s6 = self.get_argument("s6")
-		current_user = self.get_current_user()
+	    name = self.get_argument("name")
+    	    desc = self.get_argument("desc")
+    	    s1 = self.get_argument("s1")
+    	    s2 = self.get_argument("s2")
+    	    s3 = self.get_argument("s3")
+    	    s4 = self.get_argument("s4")
+    	    s5 = self.get_argument("s5")
+    	    s6 = self.get_argument("s6")
+    	    current_user = self.get_current_user()
 		
-		self.db.execute("INSERT INTO Profile (creator_id, name, describe_line, side1, side2, side3, side4, side5, side6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);", current_user.user_id, name, desc, s1, s2, s3, s4, s5, s6) 
-		self.redirect("/settings")	
+	    profile_id = self.db.execute("INSERT INTO Profile (creator_id, name, describe_line, side1, side2, side3, side4, side5, side6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);", current_user.user_id, name, desc, s1, s2, s3, s4, s5, s6) 
+	    self.write(str(profile_id))	
 
 #Deals with editing/deleting a profile
 class ProfileEditHandler(BaseHandler):
