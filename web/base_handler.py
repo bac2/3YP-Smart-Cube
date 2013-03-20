@@ -23,7 +23,11 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
 		user_id = self.get_secure_cookie('user')
 		if not user_id:
-                    return None
+                    #Try for an API key?
+                    user_id = self.get_api_user()
+                    if user_id is None:
+                        return None
+
 		user_info = self.db.get('SELECT * FROM User WHERE id=%s', user_id)
                 if user_info is None:
                     #Cookie exists but user doesn't (Database deletion :()
@@ -60,3 +64,36 @@ class BaseHandler(tornado.web.RequestHandler):
 			cubes.append(current)
 		return cubes
 		
+        def get_api_user(self):
+            import hmac
+            import hashlib
+            import time
+            from tornado.web import HTTPError
+            try:
+                digest = self.get_argument("api")
+                user = self.get_argument("user")
+                created_time = self.get_argument("time")
+            except HTTPError:
+                return None
+
+            if time.time() - float(created_time) > 60:
+                #Request is older than 1 minute
+                return None
+
+            #Get the URI without the api key parameter
+            uri = self.request.uri.replace("api=%s"%digest, "")
+            uri = uri.replace("&&", "&")
+            uri = uri.replace("?&", "?")
+            if uri[-1] == '&':
+                uri = uri[0:-1]
+
+            keys = self.db.query("SELECT api_key FROM ApiKey where user_id=%s;", user)
+            for key in keys:
+                hmac_obj = hmac.new(str(key['api_key']), uri, hashlib.sha256)
+                ourdigest = hmac_obj.hexdigest()
+
+                if ourdigest == digest:
+                    #Authorized request
+                    return user
+
+            return None

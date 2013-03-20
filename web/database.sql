@@ -96,6 +96,16 @@ CREATE TABLE Event (
 		REFERENCES `Profile`(`id`)
 ) ENGINE InnoDB;
 
+CREATE TABLE ApiKey (
+	id INT AUTO_INCREMENT,
+	user_id INT,
+	key VARCHAR(128),
+	created DATETIME,
+	PRIMARY KEY(id),
+	FOREIGN KEY (`user_id`)
+		REFERENCES `User`(`id`)
+) ENGINE InnoDB;
+
 ALTER TABLE User ADD CONSTRAINT user_fk1 FOREIGN KEY `User`(`default_cube`)
 		REFERENCES `Cube`(`id`)
 		ON DELETE CASCADE
