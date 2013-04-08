@@ -45,23 +45,24 @@ class Accel:
 		return self.bus.read_byte_data(0x1D,0x06)
 	
 	def getPercentX(self):
-		return 80*self.getValueX()/256
+		return 100*self.getValueX()/256
  
 	def getValueY(self):
 		return self.bus.read_byte_data(0x1D,0x07)
 
 	def getPercentY(self):
-		return 80*self.getValueY()/256
+		return 100*self.getValueY()/256
  
 	def getValueZ(self):
 		return self.bus.read_byte_data(0x1D,0x08)
 
 	def getPercentZ(self):
-		return 80*self.getValueZ()/256
+		return 100*self.getValueZ()/256
 		
 
 if( __name__ == '__main__'):
 	MMA7455 = Accel()
+
 	 
 	for a in range(10000):
 		x = MMA7455.getValueX()
@@ -71,5 +72,5 @@ if( __name__ == '__main__'):
 		print "x=", x , "\t[" , "=" * (80 * x / 256) , " " *  (80 - (80 * x / 256)) , "] " , (80 * x / 256) , "%"
 		print "y=", y , "\t[" , "=" * (80 * y / 256) , " " *  (80 - (80 * y / 256)) , "] " , (80 * y / 256) , "%"
 		print "z=", z , "\t[" , "=" * (80 * z / 256) , " " *  (80 - (80 * z / 256)) , "] " , (80 * z / 256) , "%"
-		time.sleep(1.0)
+		time.sleep(0.1)
 		os.system('clear')

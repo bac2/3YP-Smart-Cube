@@ -57,35 +57,70 @@ class Cube:
 
 
 	def check_rotation(self):
+		lowerBound = 0.9
+		upperBound = 1.1
 		currentX = self.accel.getPercentX()
 		currentY = self.accel.getPercentY()
 		currentZ = self.accel.getPercentZ()
 		#We want to check if it matchs the calibration...
-		#First, X... (Rotates around Z Axis)
-		if( self.XPos[0]-10 < currentX <= self.XPos[0]+10
-			and self.XPos[1]-10 < currentY <= self.XPos[1]+10 ):
-			#Either XPos or XNeg
-			if( self.XPos[2]-10 < currentZ <= self.XPos[2]+10 ):
+
+		#First, X UP... (Rotates around Z Axis)
+		XDiff = abs(self.XPos[0] - currentX)
+		YDiff = abs(self.XPos[1] - currentY)
+		ZDiff = abs(self.XPos[2] - currentZ)
+		if( (XDiff < 10 or XDiff > 90)
+			and (YDiff < 10 or YDiff > 90)
+			and (ZDiff < 10 or ZDiff > 90) ):
 				self.currentRotation = Cube.XUP	
-			if( self.XNeg[2]-10 < currentZ <= self.XNeg[2]+10 ):
+
+		#Then X DOWN...
+		XDiff = abs(self.XNeg[0] - currentX)
+		YDiff = abs(self.XNeg[1] - currentY)
+		ZDiff = abs(self.XNeg[2] - currentZ)
+		
+		if( (XDiff < 10 or XDiff > 90)
+			and (YDiff < 10 or YDiff > 90)
+			and (ZDiff < 10 or ZDiff > 90) ):
 				self.currentRotation = Cube.XDOWN
 
-		#Then Y... (Rotates around Y axis)
-		elif( self.YPos[0]-10 < currentX <= self.YPos[0]+10
-			and self.YPos[2]-10 < currentZ <= self.YPos[2]+10 ):
-			#Either YPos or YNeg
-			if( self.YPos[1]-10 < currentY <= self.YPos[1]+10 ):
+		#Then Y Pos... (Rotates around Y axis)
+		XDiff = abs(self.YPos[0] - currentX)
+		YDiff = abs(self.YPos[1] - currentY)
+		ZDiff = abs(self.YPos[2] - currentZ)
+		
+		if( (XDiff < 10 or XDiff > 90)
+			and (YDiff < 10 or YDiff > 90)
+			and (ZDiff < 10 or ZDiff > 90) ):
 				self.currentRotation = Cube.YUP
-			if( self.YNeg[1]-10 < currentY <= self.YNeg[1]+10 ):
+
+		#Then YNeg...
+		XDiff = abs(self.YNeg[0] - currentX)
+		YDiff = abs(self.YNeg[1] - currentY)
+		ZDiff = abs(self.YNeg[2] - currentZ)
+		
+		if( (XDiff < 10 or XDiff > 90)
+			and (YDiff < 10 or YDiff > 90)
+			and (ZDiff < 10 or ZDiff > 90) ):
 				self.currentRotation = Cube.YDOWN
 
-		#Then Z... (Rotates around X axis)
-		elif( self.ZPos[1]-10 < currentY <= self.ZPos[1]+10
-			and self.ZPos[2]-10 < currentZ <= self.ZPos[2]+10 ):
-			#Either ZPos or ZNeg
-			if( self.ZPos[0]-10 < currentX <= self.ZPos[0]+10 ):
+		#Then ZPos... (Rotates around X axis)
+		XDiff = abs(self.ZPos[0] - currentX)
+		YDiff = abs(self.ZPos[1] - currentY)
+		ZDiff = abs(self.ZPos[2] - currentZ)
+		
+		if( (XDiff < 10 or XDiff > 90)
+			and (YDiff < 10 or YDiff > 90)
+			and (ZDiff < 10 or ZDiff > 90) ):
 				self.currentRotation = Cube.ZUP
-			if( self.ZNeg[0]-10 < currentX <= self.ZNeg[0]+10 ):
+
+		#Then ZNeg
+		XDiff = abs(self.ZNeg[0] - currentX)
+		YDiff = abs(self.ZNeg[1] - currentY)
+		ZDiff = abs(self.ZNeg[2] - currentZ)
+		
+		if( (XDiff < 10 or XDiff > 90)
+			and (YDiff < 10 or YDiff > 90)
+			and (ZDiff < 10 or ZDiff > 90) ):
 				self.currentRotation = Cube.ZDOWN
 
 		else:
@@ -112,3 +147,23 @@ if __name__=='__main__':
 	cube.calibY()
 	cube.calibZ()
 	print cube.XPos, cube.XNeg, cube.YPos, cube.YNeg, cube.ZPos, cube.ZNeg
+
+	import time
+	import os
+
+	MMA7455 = cube.accel 
+	 
+	for a in range(10000):
+		x = MMA7455.getPercentX()
+		y = MMA7455.getPercentY()
+		z = MMA7455.getPercentZ()
+	 
+		print "x=", x , "\t[" , "=" * (x) , " " *  (100 - x) , "] " , x , "%"
+		print "y=", y , "\t[" , "=" * (y) , " " *  (100 - y) , "] " , y , "%"
+		print "z=", z , "\t[" , "=" * (z) , " " *  (100 - z) , "] " , z , "%"
+		cube.check_rotation()
+		print cube
+		print cube.XPos, cube.XNeg, cube.YPos, cube.YNeg, cube.ZPos, cube.ZNeg
+		time.sleep(0.1)
+		os.system('clear')
+
