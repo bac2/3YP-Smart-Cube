@@ -73,15 +73,15 @@
 					{% else %}
 					{% for profile in profiles %}
 					<div class="profile" profile_id="{{profile.profile_id}}">
-						<button type="button" id="delete" class="close">&times;</button>
-						<button type="button" id="edit" class="close">✎</button>
-						<button type="button" id="confirm" class="close">✔</button>
 						<strong><span id="name">{{ profile.name }}</span></strong><br/>
 						Tag line: <span id="tagline">{{ profile.describe_line }}</span><br/>
 						{% for index, side in zip(range(0, len(profile.sides)), profile.sides) %}
 						Side {{index+1}}:   <span id="side{{index+1}}">{{side}}</span><br/>
 						{% end %}
-						<br/>
+						<button type="button" id="edit" class="btn">✎ Edit</button>
+						<button type="button" id="confirm" class="btn">✔ Confirm</button>
+						<button type="button" id="delete" class="btn">&times; Delete</button>
+						<br/><br/>
 					</div>
 					{% end %}
 

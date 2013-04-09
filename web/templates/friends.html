@@ -45,7 +45,11 @@
 
 			{%for friend in friends %}
 			<div class="friend well">
+				{% if len(friend.cubes) > 0 %}
 				{{friend.name}} is
+				{% else %}
+				{{friend.name}} hasn't registered any cubes yet!
+				{% end %}
 				{% for cube in friend.cubes %}
 				{% if cube.corresponding_profile is None %}
 				awaiting a cube update (Smart-Cube {{cube.code}})<br/>
