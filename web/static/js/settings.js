@@ -14,7 +14,7 @@ function setPublic() {
 	var cube_id = cube.attr("cube_code");
 	var value = ($(this).html() == "Yes") ? 1 : 0;
 	var dropdown_text = cube.find(".public_state");
-	$.post("/cube/"+cube_code+"/public?value="+value, function(data) {
+	$.post("/cube/"+cube_id+"/public?value="+value, function(data) {
 		dropdown_text.html(data);
 	});
 	dropdown_text.html("...");
