@@ -23,9 +23,17 @@
 				Your current profile will come into effect on the next update.
 				{% end %}
 				{% else %}
-				You are {{ cube.corresponding_profile.describe_line }} {{ cube.corresponding_profile.sides[cube.rotation-1] }}.
+				{{ cube.corresponding_profile.describe_line }} {{ cube.corresponding_profile.sides[cube.rotation-1] }}.
 				<div class="pull-right" style="font-size: 10pt;">
-					Last Updated: {%if cube.last_transition.hour<10%}0{%end%}{{str(cube.last_transition.hour)}}:{%if cube.last_transition.minute<10%}0{%end%}{{str(cube.last_transition.minute)}}
+					Last Updated: <span class="cube_time" title="{{cube.last_transition.strftime('%A, %d %B at %H:%M')}}">
+					{% if (datetime.datetime.now() - cube.last_transition).days > 1 %} 
+						{{ (datetime.datetime.now() - cube.last_transition).days }} days ago
+					{% elif (datetime.datetime.now() - cube.last_transition).seconds > 3600 %}
+						{{ int((datetime.datetime.now() - cube.last_transition).seconds / 3600) }} hours ago
+					{% else %}
+						{{ int((datetime.datetime.now() - cube.last_transition).seconds / 60) }} minutes ago
+					{% end %}
+					</span>	
 				</div>
 				{% end %}
 			</div>
@@ -52,11 +60,22 @@
 				{% end %}
 				{% for cube in friend.cubes %}
 				{% if cube.corresponding_profile is None %}
-				awaiting a cube update (Smart-Cube {{cube.code}})<br/>
+					<div class="cube_message" style="margin-left: 10px;">
+				    awaiting a cube update (Smart-Cube {{cube.code}})<br/>
+					</div>
 				{% else %}
-				<div class="cube" cube_code="{{cube.code}}">{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}} (Smart-Cube {{cube.code}}) <a class='btn add-event push-right' data-toggle="modal" href="#event_create{{cube.cube_id}}">Add event</a>
+				<div class="cube" cube_code="{{cube.code}}" style="margin-left:10px;">
+					{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}} (Smart-Cube {{cube.code}}) <a class='btn add-event push-right' data-toggle="modal" href="#event_create{{cube.cube_id}}">Add event</a>
 					<div class="pull-right" style="font-size: 10pt;">
-						Last Updated: {%if cube.last_transition.hour<10%}0{%end%}{{str(cube.last_transition.hour)}}:{%if cube.last_transition.minute<10%}0{%end%}{{str(cube.last_transition.minute)}}
+						Last Updated: <span class="cube_time" title="{{cube.last_transition.strftime('%A, %d %B at %H:%M')}}">
+						{% if (datetime.datetime.now() - cube.last_transition).days > 1 %} 
+							{{ (datetime.datetime.now() - cube.last_transition).days }} days ago
+						{% elif (datetime.datetime.now() - cube.last_transition).seconds > 3600 %}
+							{{ int((datetime.datetime.now() - cube.last_transition).seconds / 3600) }} hours ago
+						{% else %}
+							{{ int((datetime.datetime.now() - cube.last_transition).seconds / 60) }} minutes ago
+						{% end %}
+						</span>	
 					</div>
 
 					<!-- Profile creation modal -->

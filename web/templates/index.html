@@ -14,7 +14,7 @@
 			{% else %}
 				{% for cube in public_cubes %}
 					{% if cube.corresponding_profile is not None %}
-					<span>Smart-Cube {{cube.code}} is {{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}}</span><br/>
+					<span>Smart-Cube {{cube.code}}: {{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}}</span><br/>
 					{% else %}
 					<span>Smart-Cube {{cube.code}} hasn't updated yet
 					{% end %}
