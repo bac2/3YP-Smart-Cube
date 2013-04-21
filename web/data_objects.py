@@ -66,3 +66,12 @@ class Event():
                 self.action_pretty = "flash the LED in my Smart-Cube"
             elif self.action == "sound":
                 self.action_pretty = "play a sound from this website"
+
+if __name__=='__main__':
+    import datetime
+    info = {}
+    info['time'] = str(datetime.datetime.utcnow())
+    info['position'] = 4
+    info['cube_id'] = "111"
+    trans = Transition(info)
+    print trans.time

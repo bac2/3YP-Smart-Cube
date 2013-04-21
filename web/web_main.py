@@ -37,6 +37,8 @@ class App(tornado.web.Application):
                         (r"/cube/([0-9]+)/register", cube.RegisterHandler), #GET
                         (r"/cube", cube.CubeHandler), #POST
                         (r"/settings", settings.SettingsHandler), #GET
+                        (r"/settings/apikey", settings.ApiKeyHandler), #POST
+                        (r"/settings/apikey/([0-9]+)", settings.ApiKeyHandler), #DELETE
                         (r"/profile", profile.ProfileCreateHandler), #POST
                         (r"/profile/([0-9]+)", profile.ProfileEditHandler), #DELETE, POST
                         (r"/cube/([0-9]+)/profile", cube.ProfileHandler), #POST, GET

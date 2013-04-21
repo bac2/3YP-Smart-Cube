@@ -110,6 +110,18 @@
 				<div class="well">
 					You have logged in with Google.
 				</div>
+				<div class="well" id="api">
+					You have <span id="api_count">{{ len(apikeys) }}</span> API keys<br />
+					<div id="keys">
+					{% for key, i in zip(apikeys, xrange(len(apikeys))) %}
+					<div class="api" key_id="{{key['id']}}" style="margin-left: 10px;" title="Created {{str(key['created'])}}">Key: {{key['api_key']}}
+						<button type="button" id="delete" class="close">&times;</button>
+					</div>
+					{% end %}
+					</div>
+					<br/>
+					<a class="btn">Create a new API key</a>
+				</div>
 			</div>
 		</div>
 

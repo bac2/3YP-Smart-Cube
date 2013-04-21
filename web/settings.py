@@ -14,7 +14,13 @@ class SettingsHandler(BaseHandler):
 		self.params['cubes'] = self.get_cubes()
 		self.params['user'] = self.get_current_user()
 		self.params['events'] = self.get_events()
+                self.params['apikeys'] = self.get_api_keys()
 		self.render('settings.html', **self.params)
+
+        def get_api_keys(self):
+            current_user = self.get_current_user()
+            keys = self.db.query("SELECT id, api_key, created FROM ApiKey WHERE user_id=%s;", current_user.user_id)
+            return keys
                 
         def get_events(self):
                 current_user = self.get_current_user()
@@ -37,3 +43,20 @@ class SettingsHandler(BaseHandler):
 			profile.creator = current_user
 			profiles.append(profile)
 		return profiles
+
+
+class ApiKeyHandler(BaseHandler):
+        @tornado.web.authenticated
+        def post(self):
+            import os
+            import base64
+            key = base64.urlsafe_b64encode(os.urandom(15))
+            self.db.execute("INSERT INTO ApiKey (user_id, api_key, created) VALUES (%s, %s, NOW());", self.get_current_user().user_id, key)
+            self.write(key)
+            return
+
+        @tornado.web.authenticated
+        def delete(self, key_id):
+            self.db.execute("DELETE FROM ApiKey WHERE id=%s;", key_id)
+            self.write("success")
+            return
