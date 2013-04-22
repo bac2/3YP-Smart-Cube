@@ -19,7 +19,7 @@
 							<span>{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}}</span>
 						<div class="pull-right" style="font-size: 10pt;">
 							Last Updated: <span class="cube_time" title="{{cube.last_transition.strftime('%A, %d %B at %H:%M')}}">
-							{% if (datetime.datetime.now() - cube.last_transition).days > 1 %} 
+							{% if (datetime.datetime.now() - cube.last_transition).days >= 1 %} 
 								{{ (datetime.datetime.now() - cube.last_transition).days }} days ago
 							{% elif (datetime.datetime.now() - cube.last_transition).seconds > 3600 %}
 								{{ int((datetime.datetime.now() - cube.last_transition).seconds / 3600) }} hours ago

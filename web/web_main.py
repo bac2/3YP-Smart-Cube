@@ -81,7 +81,8 @@ def main():
 	define("mysql_host", default='localhost', help='Host to connect to')
 	define("mysql_database", default='3yp', help='The database to use')
 
-	logging.basicConfig(filename='web.log', level=logging.INFO)
+	FORMAT = '%(asctime)s %(message)s'
+	logging.basicConfig(format=FORMAT, filename='web.log', level=logging.INFO)
 
 	tornado.options.parse_command_line()
 	http_server = tornado.httpserver.HTTPServer(App())
