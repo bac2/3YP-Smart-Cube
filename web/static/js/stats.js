@@ -148,6 +148,10 @@ function generateGantt(parent_div, cubes_data) {
 	data_array.push(data_item);
 
 	});
+	
+	//Required to convince it to show the last one
+	var fake_data_item = [new Date(), 0, new Date(), "Fake"];
+	data_array.push(fake_data_item);
 
 	var ticks = []
 		for( var key in names ) {
@@ -160,7 +164,7 @@ function generateGantt(parent_div, cubes_data) {
 			gantt: {
 				active: true,
 		show: true,
-		barHeight: 0.5
+		barHeight: 1.0
 			},
 		nearBy: {},
 		grid:	{ hoverable:true, clickable:true }
