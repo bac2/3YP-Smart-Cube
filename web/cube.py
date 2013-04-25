@@ -153,7 +153,7 @@ class ProfileHandler(BaseHandler):
 
 class PublicHandler(BaseHandler):
 	@tornado.web.authenticated
-	def post(self, cube_code):
+	def post(self, cube_id):
                 value = self.get_argument("value")
 		self.save_public(cube_id, value)
 		if value == '1':
@@ -164,7 +164,7 @@ class PublicHandler(BaseHandler):
 		self.write(response)
 
 	def save_public(self, cube_id, value):
-		self.db.execute("UPDATE Cube SET public=%s WHERE unique_id=%s", value, cube_code)
+		self.db.execute("UPDATE Cube SET public=%s WHERE unique_id=%s", value, cube_id)
 
 class EventHandler(BaseHandler):
         def get(self, cube_code):

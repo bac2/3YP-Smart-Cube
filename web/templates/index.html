@@ -13,7 +13,25 @@
 				We have no public Smart-Cubes to display at the moment - Help us out and <a href="/settings">make one of your Smart-Cubes public!</a>
 			{% else %}
 				{% for cube in public_cubes %}
-					<span>Smart-Cube {{cube.code}} is {{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}}</span><br/>
+					<div class="well">
+					{% if cube.corresponding_profile is not None %}
+						Smart-Cube {{cube.code}}<br/>
+							<span>{{cube.corresponding_profile.describe_line}} {{cube.corresponding_profile.sides[ cube.rotation-1 ]}}</span>
+						<div class="pull-right" style="font-size: 10pt;">
+							Last Updated: <span class="cube_time" title="{{cube.last_transition.strftime('%A, %d %B at %H:%M')}}">
+							{% if (datetime.datetime.now() - cube.last_transition).days >= 1 %} 
+								{{ (datetime.datetime.now() - cube.last_transition).days }} days ago
+							{% elif (datetime.datetime.now() - cube.last_transition).seconds > 3600 %}
+								{{ int((datetime.datetime.now() - cube.last_transition).seconds / 3600) }} hours ago
+							{% else %}
+								{{ int((datetime.datetime.now() - cube.last_transition).seconds / 60) }} minutes ago
+							{% end %}
+							</span>	
+						</div>
+					{% else %}
+					<span>Smart-Cube {{cube.code}} hasn't updated yet
+					{% end %}
+					</div>
 				{% end %}
 			{% end %}
 			<p><br/><a class="btn" href="/about">What are public cubes?</a><div>

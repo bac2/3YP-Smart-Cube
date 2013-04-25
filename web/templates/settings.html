@@ -73,15 +73,15 @@
 					{% else %}
 					{% for profile in profiles %}
 					<div class="profile" profile_id="{{profile.profile_id}}">
-						<button type="button" id="delete" class="close">&times;</button>
-						<button type="button" id="edit" class="close">✎</button>
-						<button type="button" id="confirm" class="close">✔</button>
 						<strong><span id="name">{{ profile.name }}</span></strong><br/>
 						Tag line: <span id="tagline">{{ profile.describe_line }}</span><br/>
 						{% for index, side in zip(range(0, len(profile.sides)), profile.sides) %}
 						Side {{index+1}}:   <span id="side{{index+1}}">{{side}}</span><br/>
 						{% end %}
-						<br/>
+						<button type="button" id="edit" class="btn">✎ Edit</button>
+						<button type="button" id="confirm" class="btn">✔ Confirm</button>
+						<button type="button" id="delete" class="btn">&times; Delete</button>
+						<br/><br/>
 					</div>
 					{% end %}
 
@@ -110,6 +110,18 @@
 				<div class="well">
 					You have logged in with Google.
 				</div>
+				<div class="well" id="api">
+					You have <span id="api_count">{{ len(apikeys) }}</span> API keys<br />
+					<div id="keys">
+					{% for key, i in zip(apikeys, xrange(len(apikeys))) %}
+					<div class="api" key_id="{{key['id']}}" style="margin-left: 10px;" title="Created {{str(key['created'])}}">Key: {{key['api_key']}}
+						<button type="button" id="delete" class="close">&times;</button>
+					</div>
+					{% end %}
+					</div>
+					<br/>
+					<a class="btn">Create a new API key</a>
+				</div>
 			</div>
 		</div>
 
@@ -121,7 +133,7 @@
 					<h3>Create a profile</h3>
 				</div>
 				<div class="modal-body">
-					<p>A profile is used to interpret what your Smart-Cube means.<br/>The tag line is used in a sentence the form of: User is [tag-line] [side]. e.g. Ben is currently working. </p>
+					<p>A profile is used to interpret what your Smart-Cube means.<br/>The tag line is used in a sentence the form of: [tag-line] {side}. e.g. [Ben is] {working}. </p>
 					<div class="control-group">
 						<label class="control-label" for="p_name">Profile name</label>
 						<div class="controls">

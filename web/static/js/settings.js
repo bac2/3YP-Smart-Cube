@@ -14,7 +14,7 @@ function setPublic() {
 	var cube_id = cube.attr("cube_code");
 	var value = ($(this).html() == "Yes") ? 1 : 0;
 	var dropdown_text = cube.find(".public_state");
-	$.post("/cube/"+cube_code+"/public?value="+value, function(data) {
+	$.post("/cube/"+cube_id+"/public?value="+value, function(data) {
 		dropdown_text.html(data);
 	});
 	dropdown_text.html("...");
@@ -152,6 +152,27 @@ function create_profile() {
 	});
 }
 
+function create_api() {
+	$.post("/settings/apikey", function(data) {
+		$("#keys").append('<div class="api" style="margin-left:10px;" title="Created just now">Key: '+data+'</div>'); 
+		$('#api_count').text( function(i, t) { return parseInt(t,10)+1; } );
+	});
+}
+
+function delete_api() {
+	var id = $(this).parent().attr("key_id")
+	var div = $(this).parent()
+	$.delete_("/settings/apikey/"+id, function(data) {
+		if (data == "success") {
+			div.hide()
+			$('#api_count').text( function(i, t) { return parseInt(t,10)-1; } );
+			return;
+		}
+	});
+}
+	
+
+
 
 $(document).ready(function() {
 	$.each( $('.cube'), function( i, cube ) {
@@ -183,5 +204,10 @@ $(document).ready(function() {
 		hide: function() {
 			$(this).css('overflow', 'hidden');
 		}
+	});
+
+	$('#api').children(".btn").click( create_api );
+	$('#keys').children("div").each(function( i, span) {
+		$(span).children("button").click( delete_api );
 	});
 });	

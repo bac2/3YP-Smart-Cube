@@ -99,7 +99,7 @@ CREATE TABLE Event (
 CREATE TABLE ApiKey (
 	id INT AUTO_INCREMENT,
 	user_id INT,
-	key VARCHAR(128),
+	api_key VARCHAR(128),
 	created DATETIME,
 	PRIMARY KEY(id),
 	FOREIGN KEY (`user_id`)

@@ -37,6 +37,8 @@ class App(tornado.web.Application):
                         (r"/cube/([0-9]+)/register", cube.RegisterHandler), #GET
                         (r"/cube", cube.CubeHandler), #POST
                         (r"/settings", settings.SettingsHandler), #GET
+                        (r"/settings/apikey", settings.ApiKeyHandler), #POST
+                        (r"/settings/apikey/([0-9]+)", settings.ApiKeyHandler), #DELETE
                         (r"/profile", profile.ProfileCreateHandler), #POST
                         (r"/profile/([0-9]+)", profile.ProfileEditHandler), #DELETE, POST
                         (r"/cube/([0-9]+)/profile", cube.ProfileHandler), #POST, GET
@@ -79,7 +81,8 @@ def main():
 	define("mysql_host", default='localhost', help='Host to connect to')
 	define("mysql_database", default='3yp', help='The database to use')
 
-	logging.basicConfig(filename='web.log', level=logging.INFO)
+	FORMAT = '%(asctime)s %(message)s'
+	logging.basicConfig(format=FORMAT, filename='web.log', level=logging.INFO)
 
 	tornado.options.parse_command_line()
 	http_server = tornado.httpserver.HTTPServer(App())
