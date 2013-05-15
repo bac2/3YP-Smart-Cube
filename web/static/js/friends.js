@@ -15,7 +15,7 @@ function createEvent() {
 	action = cube.find("#action_select").val();
 	profile_id = cube.find("#action_select").attr("profile_id")
 
-	$.post("/cube/"+cube_code+"/events/?side="+side+"&action="+action+"&profile_id="+profile_id, function(data) {
+	$.post("/cube/"+cube_id+"/events?side="+side+"&action="+action+"&profile_id="+profile_id, function(data) {
 			if(data == "success") {
 				return;
 			}
