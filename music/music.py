@@ -4,10 +4,12 @@ import hmac
 import json
 import time
 from os import system
+import signal
 
 
 API_KEY = 'hello'
-CUBE_CODE = '468138'
+CUBE_CODE = '460'
+URL = 'http://bubuntu-vm.lan:8080'
 
 class MusicController:
 
@@ -15,27 +17,35 @@ class MusicController:
         self.state = 'stopped'
 
     def play(self):
-        system("rhythmbox-client --no-start --play")
+        system("rhythmbox-client --play &")
+	print "Playing..."
         self.state = 'playing'
 
     def stop(self):
-        system("rhythmbox-client --stop")
+        system("rhythmbox-client --stop &")
+	print "Stopped..."
         self.state = 'stopped'
 
     def pause(self):
-        system("rhythmbox-client --pause")
+        system("rhythmbox-client --pause & ")
+	print "Paused..."
         self.state = 'paused'
 
 class Cube:
 
     def __init__(self):
         self.music = MusicController()
+	self.last_pos = -1
         self.actions = {}
         self.actions[0] = self.music.pause
         self.actions[1] = self.music.play
+	self.actions[2] = self.music.pause
+	self.actions[3] = self.music.play
+	self.actions[4] = self.music.pause
+	self.actions[5] = self.music.play
 
     def check_state(self):
-        server = 'http://localhost:8080'
+        server = URL
         url = '/cube'
         thetime = time.time()
         url = url+'?time='+str(thetime)+'&user=1'
@@ -53,14 +63,26 @@ class Cube:
                 if cube['code'] == CUBE_CODE:
                     #We want the position
                     pos = int(cube['position'])
-                    self.actions[pos]()
+		    if pos != self.last_pos:
+                        self.actions[pos-1]()
+			self.last_pos = pos
 
 
     def get_auth(self, url):
         hmac_obj = hmac.new(API_KEY, url, hashlib.sha256)
         return hmac_obj.hexdigest()
+
+def handler(signum, frame):
+	system('rhythmbox-client --quit')
+	exit(0)
         
 if __name__ == '__main__':
+    system('rhythmbox-client &')
+    time.sleep(3)
+    signal.signal(signal.SIGINT, handler)
     cube = Cube()
-    cube.check_state()
+    while(True):
+    	cube.check_state()
+	time.sleep(2)
+    system('rhythmbox-client --quit')
 
