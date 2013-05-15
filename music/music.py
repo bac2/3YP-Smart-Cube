@@ -7,7 +7,7 @@ from os import system
 import signal
 
 
-API_KEY = 'hello'
+API_KEY = 'Of7yGQET1k41KbB-mmJv'
 CUBE_CODE = '460'
 URL = 'http://bubuntu-vm.lan:8080'
 
