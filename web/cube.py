@@ -198,6 +198,4 @@ class EventHandler(BaseHandler):
                     #Not friends!
                     return
 
-                cube_id = self.db.query("SELECT id FROM Cube WHERE unique_id=%s", cube_code);
-                
-                self.db.execute("INSERT INTO Event (cube_id, owner, action, rotation, profile_id) VALUES (%s, %s, %s, %s, %s);", cube_id, current_user.user_id, action, side, profile_id);
+                self.db.execute("INSERT INTO Event (cube_id, owner, action, rotation, profile_id) VALUES ((SELECT id FROM Cube WHERE unique_id=%s), %s, %s, %s, %s);", cube_code, current_user.user_id, action, side, profile_id);
