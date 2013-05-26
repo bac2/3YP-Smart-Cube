@@ -5,4 +5,4 @@ It can be downloaded via Python pip (pip install tornado)
 
 Running web_main.py (with ./web_main.py) will start the server on port 8080 by default
 
-It also requires a mysql database with name of 3YP. This can be customised in web_main.
+It also requires a mysql database with name of 3YP. This can be customised in the main method of web_main or via the commandline arguments which can be viewed using --help.
